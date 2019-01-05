@@ -14,5 +14,11 @@ SDL2/SDL_timer.h
 ui.h
 /home/allacee/CLionProjects/checkers-online/Client/src/ui.h
 
+/home/allacee/CLionProjects/checkers-online/Client/src/ui.c
+SDL2/SDL.h
+-
+string.h
+-
+
 /home/allacee/CLionProjects/checkers-online/Client/src/ui.h
 

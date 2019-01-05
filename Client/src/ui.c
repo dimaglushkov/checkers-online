@@ -2,33 +2,29 @@
 #include <string.h>
 
 
-//int draw_init (int connection_status);
-//int draw_waiting_for_enemy ();
 //int draw_gameplay(char desk[8][8], char game_status);
 
 
-//creates main window and main surface
-//returns 0 if everything is ok, 1 otherwise
-int draw_create_mains(char* title);
-
-//destroys main window and main surface
-//return 0 if everything is ok, 1 otherwise
-
 const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750;
 const char* GAME_TITLE = "Checkers-online(ver. 0.1)";
+
 
 SDL_Window*  main_window = NULL;
 SDL_Surface* main_surface = NULL;
 
 
-int draw_init (int connection_status)
+int init_create_mains(char* title);
+
+//Draws image that pops while both players loading
+int draw_intro (int connection_status)
 {
 
     if (main_surface == NULL)
     {
         SDL_Init(SDL_INIT_VIDEO);
-        draw_create_mains(GAME_TITLE);
+        init_create_mains(GAME_TITLE);
     }
+
     SDL_Surface* loading_surface = NULL;
 
     switch (connection_status)
@@ -44,16 +40,62 @@ int draw_init (int connection_status)
     SDL_BlitSurface(loading_surface, NULL, main_surface, NULL);
     SDL_UpdateWindowSurface(main_window);
 
+    SDL_FreeSurface(loading_surface);
     return 0;
 
+}
+
+//Draws desk and other adjective info
+int draw_gameplay(char desk[8][8], char game_status)
+{
+    //TODO: take base drawing to another func and call it only once
+
+    SDL_Surface* base_gameplay_surface = NULL;
+    SDL_Surface* checkers_surface = NULL;
+    SDL_Surface* desk_surface = NULL;
+    SDL_Surface* menu_surface = NULL;
+    SDL_Surface* small_checkers_surface = NULL;
+
+    base_gameplay_surface = SDL_LoadBMP("../img/draw_gameplay_base");
+    checkers_surface = SDL_LoadBMP("../img/draw_checkers.bmp");
+    desk_surface = SDL_LoadBMP("../img/desk.bmp");
+
+    SDL_Rect white_checker, black_checker, current_pos, optional_pos, white_big, black_big;
+    white_checker.x = 0;
+
+    
+
+
+
+
+
+
+
+
+
+    SDL_BlitSurface(base_gameplay_surface, NULL, main_surface, NULL);
+
+
+
+
+    SDL_UpdateWindowSurface(main_window);
+
+    return 0;
+}
+
+
+int draw_destroy_mains()
+{
+    SDL_FreeSurface( main_surface );
+    SDL_DestroyWindow( main_window);
+    SDL_Quit();
+    return 0;
 }
 
 
 
 
-
-
-int draw_create_mains(char* title)
+int init_create_mains(char* title)
 {
     main_window = SDL_CreateWindow(title,
                                    SDL_WINDOWPOS_UNDEFINED,
@@ -69,14 +111,5 @@ int draw_create_mains(char* title)
     if (!main_surface)
         return 1;
 
-    return 0;
-}
-
-
-int draw_destroy_mains()
-{
-    SDL_FreeSurface( main_surface );
-    SDL_DestroyWindow( main_window);
-    SDL_Quit();
     return 0;
 }
