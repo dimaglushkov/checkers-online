@@ -4,7 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/allacee/CLionProjects/checkers-online/Client/main.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles/Client.dir/main.c.o"
+  "/home/allacee/CLionProjects/checkers-online/Client/src/game_proc.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles/Client.dir/src/game_proc.c.o"
+  "/home/allacee/CLionProjects/checkers-online/Client/src/main.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles/Client.dir/src/main.c.o"
+  "/home/allacee/CLionProjects/checkers-online/Client/src/network.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles/Client.dir/src/network.c.o"
+  "/home/allacee/CLionProjects/checkers-online/Client/src/ui.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles/Client.dir/src/ui.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

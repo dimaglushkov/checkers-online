@@ -78,7 +78,25 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/main.c">
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/game_proc.c">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/game_proc.h">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/main.c">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/network.c">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/network.h">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/ui.c">
+			<Option target="Client"/>
+		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/ui.h">
 			<Option target="Client"/>
 		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/CMakeLists.txt">

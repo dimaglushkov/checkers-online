@@ -6,9 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/allacee/CLionProjects/checkers-online/Client/main.c
+/home/allacee/CLionProjects/checkers-online/Client/src/main.c
 stdio.h
 -
-SDL2/SDL.h
+SDL2/SDL_timer.h
 -
+ui.h
+/home/allacee/CLionProjects/checkers-online/Client/src/ui.h
+
+/home/allacee/CLionProjects/checkers-online/Client/src/ui.h
 

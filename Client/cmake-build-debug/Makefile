@@ -123,32 +123,113 @@ Client/fast:
 	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/build
 .PHONY : Client/fast
 
-main.o: main.c.o
+src/game_proc.o: src/game_proc.c.o
 
-.PHONY : main.o
+.PHONY : src/game_proc.o
 
 # target to build an object file
-main.c.o:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.c.o
-.PHONY : main.c.o
+src/game_proc.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.o
+.PHONY : src/game_proc.c.o
 
-main.i: main.c.i
+src/game_proc.i: src/game_proc.c.i
 
-.PHONY : main.i
+.PHONY : src/game_proc.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.c.i
-.PHONY : main.c.i
+src/game_proc.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.i
+.PHONY : src/game_proc.c.i
 
-main.s: main.c.s
+src/game_proc.s: src/game_proc.c.s
 
-.PHONY : main.s
+.PHONY : src/game_proc.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/main.c.s
-.PHONY : main.c.s
+src/game_proc.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.s
+.PHONY : src/game_proc.c.s
+
+src/main.o: src/main.c.o
+
+.PHONY : src/main.o
+
+# target to build an object file
+src/main.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/main.c.o
+.PHONY : src/main.c.o
+
+src/main.i: src/main.c.i
+
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/main.c.i
+.PHONY : src/main.c.i
+
+src/main.s: src/main.c.s
+
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/main.c.s
+.PHONY : src/main.c.s
+
+src/network.o: src/network.c.o
+
+.PHONY : src/network.o
+
+# target to build an object file
+src/network.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/network.c.o
+.PHONY : src/network.c.o
+
+src/network.i: src/network.c.i
+
+.PHONY : src/network.i
+
+# target to preprocess a source file
+src/network.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/network.c.i
+.PHONY : src/network.c.i
+
+src/network.s: src/network.c.s
+
+.PHONY : src/network.s
+
+# target to generate assembly for a file
+src/network.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/network.c.s
+.PHONY : src/network.c.s
+
+src/ui.o: src/ui.c.o
+
+.PHONY : src/ui.o
+
+# target to build an object file
+src/ui.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.o
+.PHONY : src/ui.c.o
+
+src/ui.i: src/ui.c.i
+
+.PHONY : src/ui.i
+
+# target to preprocess a source file
+src/ui.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.i
+.PHONY : src/ui.c.i
+
+src/ui.s: src/ui.c.s
+
+.PHONY : src/ui.s
+
+# target to generate assembly for a file
+src/ui.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.s
+.PHONY : src/ui.c.s
 
 # Help Target
 help:
@@ -159,9 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Client"
 	@echo "... edit_cache"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... src/game_proc.o"
+	@echo "... src/game_proc.i"
+	@echo "... src/game_proc.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/network.o"
+	@echo "... src/network.i"
+	@echo "... src/network.s"
+	@echo "... src/ui.o"
+	@echo "... src/ui.i"
+	@echo "... src/ui.s"
 .PHONY : help
 
 
