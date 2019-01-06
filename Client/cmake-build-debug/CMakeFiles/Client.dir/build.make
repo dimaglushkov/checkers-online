@@ -70,35 +70,22 @@ CMakeFiles/Client.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/main.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/main.c -o CMakeFiles/Client.dir/src/main.c.s
 
-CMakeFiles/Client.dir/src/ui.c.o: CMakeFiles/Client.dir/flags.make
-CMakeFiles/Client.dir/src/ui.c.o: ../src/ui.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/Client.dir/src/ui.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Client.dir/src/ui.c.o   -c /home/allacee/CLionProjects/checkers-online/Client/src/ui.c
+CMakeFiles/Client.dir/src/gui.c.o: CMakeFiles/Client.dir/flags.make
+CMakeFiles/Client.dir/src/gui.c.o: ../src/gui.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/Client.dir/src/gui.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Client.dir/src/gui.c.o   -c /home/allacee/CLionProjects/checkers-online/Client/src/gui.c
 
-CMakeFiles/Client.dir/src/ui.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Client.dir/src/ui.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/allacee/CLionProjects/checkers-online/Client/src/ui.c > CMakeFiles/Client.dir/src/ui.c.i
+CMakeFiles/Client.dir/src/gui.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Client.dir/src/gui.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/allacee/CLionProjects/checkers-online/Client/src/gui.c > CMakeFiles/Client.dir/src/gui.c.i
 
-CMakeFiles/Client.dir/src/ui.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/ui.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/ui.c -o CMakeFiles/Client.dir/src/ui.c.s
-
-CMakeFiles/Client.dir/src/game_proc.c.o: CMakeFiles/Client.dir/flags.make
-CMakeFiles/Client.dir/src/game_proc.c.o: ../src/game_proc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/Client.dir/src/game_proc.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Client.dir/src/game_proc.c.o   -c /home/allacee/CLionProjects/checkers-online/Client/src/game_proc.c
-
-CMakeFiles/Client.dir/src/game_proc.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Client.dir/src/game_proc.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/allacee/CLionProjects/checkers-online/Client/src/game_proc.c > CMakeFiles/Client.dir/src/game_proc.c.i
-
-CMakeFiles/Client.dir/src/game_proc.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/game_proc.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/game_proc.c -o CMakeFiles/Client.dir/src/game_proc.c.s
+CMakeFiles/Client.dir/src/gui.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/gui.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/gui.c -o CMakeFiles/Client.dir/src/gui.c.s
 
 CMakeFiles/Client.dir/src/network.c.o: CMakeFiles/Client.dir/flags.make
 CMakeFiles/Client.dir/src/network.c.o: ../src/network.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/Client.dir/src/network.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/Client.dir/src/network.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Client.dir/src/network.c.o   -c /home/allacee/CLionProjects/checkers-online/Client/src/network.c
 
 CMakeFiles/Client.dir/src/network.c.i: cmake_force
@@ -109,20 +96,33 @@ CMakeFiles/Client.dir/src/network.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/network.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/network.c -o CMakeFiles/Client.dir/src/network.c.s
 
+CMakeFiles/Client.dir/src/gameplay.c.o: CMakeFiles/Client.dir/flags.make
+CMakeFiles/Client.dir/src/gameplay.c.o: ../src/gameplay.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/Client.dir/src/gameplay.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Client.dir/src/gameplay.c.o   -c /home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c
+
+CMakeFiles/Client.dir/src/gameplay.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Client.dir/src/gameplay.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c > CMakeFiles/Client.dir/src/gameplay.c.i
+
+CMakeFiles/Client.dir/src/gameplay.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Client.dir/src/gameplay.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c -o CMakeFiles/Client.dir/src/gameplay.c.s
+
 # Object files for target Client
 Client_OBJECTS = \
 "CMakeFiles/Client.dir/src/main.c.o" \
-"CMakeFiles/Client.dir/src/ui.c.o" \
-"CMakeFiles/Client.dir/src/game_proc.c.o" \
-"CMakeFiles/Client.dir/src/network.c.o"
+"CMakeFiles/Client.dir/src/gui.c.o" \
+"CMakeFiles/Client.dir/src/network.c.o" \
+"CMakeFiles/Client.dir/src/gameplay.c.o"
 
 # External object files for target Client
 Client_EXTERNAL_OBJECTS =
 
 Client: CMakeFiles/Client.dir/src/main.c.o
-Client: CMakeFiles/Client.dir/src/ui.c.o
-Client: CMakeFiles/Client.dir/src/game_proc.c.o
+Client: CMakeFiles/Client.dir/src/gui.c.o
 Client: CMakeFiles/Client.dir/src/network.c.o
+Client: CMakeFiles/Client.dir/src/gameplay.c.o
 Client: CMakeFiles/Client.dir/build.make
 Client: CMakeFiles/Client.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/allacee/CLionProjects/checkers-online/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable Client"

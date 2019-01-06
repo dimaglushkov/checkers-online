@@ -6,19 +6,17 @@
 
 #IncludeRegexTransform: 
 
+/home/allacee/CLionProjects/checkers-online/Client/src/gui.h
+
 /home/allacee/CLionProjects/checkers-online/Client/src/main.c
 stdio.h
 -
 SDL2/SDL_timer.h
 -
-ui.h
-/home/allacee/CLionProjects/checkers-online/Client/src/ui.h
+gui.h
+/home/allacee/CLionProjects/checkers-online/Client/src/gui.h
+network.h
+/home/allacee/CLionProjects/checkers-online/Client/src/network.h
 
-/home/allacee/CLionProjects/checkers-online/Client/src/ui.c
-SDL2/SDL.h
--
-string.h
--
-
-/home/allacee/CLionProjects/checkers-online/Client/src/ui.h
+/home/allacee/CLionProjects/checkers-online/Client/src/network.h
 

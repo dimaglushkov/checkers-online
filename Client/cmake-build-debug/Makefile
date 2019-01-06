@@ -123,32 +123,59 @@ Client/fast:
 	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/build
 .PHONY : Client/fast
 
-src/game_proc.o: src/game_proc.c.o
+src/gameplay.o: src/gameplay.c.o
 
-.PHONY : src/game_proc.o
+.PHONY : src/gameplay.o
 
 # target to build an object file
-src/game_proc.c.o:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.o
-.PHONY : src/game_proc.c.o
+src/gameplay.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gameplay.c.o
+.PHONY : src/gameplay.c.o
 
-src/game_proc.i: src/game_proc.c.i
+src/gameplay.i: src/gameplay.c.i
 
-.PHONY : src/game_proc.i
+.PHONY : src/gameplay.i
 
 # target to preprocess a source file
-src/game_proc.c.i:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.i
-.PHONY : src/game_proc.c.i
+src/gameplay.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gameplay.c.i
+.PHONY : src/gameplay.c.i
 
-src/game_proc.s: src/game_proc.c.s
+src/gameplay.s: src/gameplay.c.s
 
-.PHONY : src/game_proc.s
+.PHONY : src/gameplay.s
 
 # target to generate assembly for a file
-src/game_proc.c.s:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/game_proc.c.s
-.PHONY : src/game_proc.c.s
+src/gameplay.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gameplay.c.s
+.PHONY : src/gameplay.c.s
+
+src/gui.o: src/gui.c.o
+
+.PHONY : src/gui.o
+
+# target to build an object file
+src/gui.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gui.c.o
+.PHONY : src/gui.c.o
+
+src/gui.i: src/gui.c.i
+
+.PHONY : src/gui.i
+
+# target to preprocess a source file
+src/gui.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gui.c.i
+.PHONY : src/gui.c.i
+
+src/gui.s: src/gui.c.s
+
+.PHONY : src/gui.s
+
+# target to generate assembly for a file
+src/gui.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/gui.c.s
+.PHONY : src/gui.c.s
 
 src/main.o: src/main.c.o
 
@@ -204,33 +231,6 @@ src/network.c.s:
 	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/network.c.s
 .PHONY : src/network.c.s
 
-src/ui.o: src/ui.c.o
-
-.PHONY : src/ui.o
-
-# target to build an object file
-src/ui.c.o:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.o
-.PHONY : src/ui.c.o
-
-src/ui.i: src/ui.c.i
-
-.PHONY : src/ui.i
-
-# target to preprocess a source file
-src/ui.c.i:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.i
-.PHONY : src/ui.c.i
-
-src/ui.s: src/ui.c.s
-
-.PHONY : src/ui.s
-
-# target to generate assembly for a file
-src/ui.c.s:
-	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/ui.c.s
-.PHONY : src/ui.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -240,18 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Client"
 	@echo "... edit_cache"
-	@echo "... src/game_proc.o"
-	@echo "... src/game_proc.i"
-	@echo "... src/game_proc.s"
+	@echo "... src/gameplay.o"
+	@echo "... src/gameplay.i"
+	@echo "... src/gameplay.s"
+	@echo "... src/gui.o"
+	@echo "... src/gui.i"
+	@echo "... src/gui.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/network.o"
 	@echo "... src/network.i"
 	@echo "... src/network.s"
-	@echo "... src/ui.o"
-	@echo "... src/ui.i"
-	@echo "... src/ui.s"
 .PHONY : help
 
 

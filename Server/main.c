@@ -68,7 +68,7 @@ int main(int argc , char *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    printf("Listener on port %d \n", PORT);
+    printf("[+]Listener on port %d \n", PORT);
 
     if (listen(master_socket, 2) < 0)
     {
@@ -77,7 +77,7 @@ int main(int argc , char *argv[])
     }
 
     addrlen = sizeof(address);
-    puts("Waiting for connections ...");
+    puts("[+]Waiting for connections ...");
 
     while(1)
     {
@@ -101,20 +101,18 @@ int main(int argc , char *argv[])
 
         if ((activity < 0) && (errno!=EINTR))
         {
-            printf("select error");
+            printf("Error: error while select().");
         }
 
         if (FD_ISSET(master_socket, &readfds))
         {
-            if ((new_socket = accept(master_socket,
-                                     (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
+            if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
             {
                 perror("accept");
                 exit(EXIT_FAILURE);
             }
 
-            printf("New connection , socket fd is %d , ip is : %s , port : %d  \n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
-                    (address.sin_port));
+            printf("[+]New connection - ip: %s port: %d  \n", inet_ntoa(address.sin_addr), ntohs(address.sin_port));
 
 
 
@@ -126,8 +124,7 @@ int main(int argc , char *argv[])
                     client_socket[i] = new_socket;
                     printf("Adding to list of sockets as %d\n" , i);
 
-                    if (i == 0)
-                        send(client_socket[0], "0\n", 3, 0);
+                    //both players connected
                     if (i == 1)
                     {
                         send(client_socket[0], init(1), STRING_SIZE, 0);
@@ -178,6 +175,9 @@ char* update(char* req)
     int checkers[2];
     char index = (char) strtol(&req[0], NULL, 10);
 
+        puts("[+]INCOMING MESSAGE:");
+        puts ("[=====================]");
+        puts(req);
         printf ("current index: %d\n", index);
 
     checkers[0] = 0;
@@ -222,6 +222,7 @@ char* update(char* req)
 
     strcpy(&answer[2], &req[2]);
 
+    puts ("[=====================]");
     puts (answer);
 
     return answer;

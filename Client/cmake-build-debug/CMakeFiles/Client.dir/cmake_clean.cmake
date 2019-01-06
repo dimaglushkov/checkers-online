@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Client.dir/src/main.c.o"
-  "CMakeFiles/Client.dir/src/ui.c.o"
-  "CMakeFiles/Client.dir/src/game_proc.c.o"
+  "CMakeFiles/Client.dir/src/gui.c.o"
   "CMakeFiles/Client.dir/src/network.c.o"
+  "CMakeFiles/Client.dir/src/gameplay.c.o"
   "Client.pdb"
   "Client"
 )
