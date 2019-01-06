@@ -127,8 +127,12 @@ int main(int argc , char *argv[])
                     //both players connected
                     if (i == 1)
                     {
+                        //sending id
+                        send(client_socket[0], "1", 2, 0);
+                        send(client_socket[1], "2", 2, 0);
+                        //sending initial messages to start game
                         send(client_socket[0], init(1), STRING_SIZE, 0);
-                        send(client_socket[1], init(2), STRING_SIZE, 0);
+                        send(client_socket[1], init(1), STRING_SIZE, 0);
                     }
                     break;
                 }
@@ -243,11 +247,8 @@ char* init(int index)
 
     if (desk_file)
     {
-        puts("creating initial string");
         fgets(buffer, buffer_size, desk_file);
-        puts (buffer);
         strcat(desk_string, buffer);
-        puts("initial string created");
     }
     else
     {

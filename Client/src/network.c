@@ -72,9 +72,24 @@ char* receive_message(int socket)
     char* message;
     message = (char*) malloc(STRING_SIZE * sizeof(char));
     read(socket, message, STRING_SIZE);
-    puts("Received message:");
+    puts("[+]Received message:");
     puts(message);
+    puts("[========]");
     return message;
+}
+
+int receive_player_id(int socket)
+{
+    char* message;
+    message = (char*) malloc(2 * sizeof(char));
+    read(socket, message, 2);
+    puts("[+]Received id message:");
+    puts(message);
+    puts("[========]");
+    int res = message[0] - '0';
+    free(message);
+    return res;
+
 }
 
 int parse_message(char* message, int* desk)

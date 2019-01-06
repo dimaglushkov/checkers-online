@@ -3,91 +3,212 @@
 #include <string.h>
 #include <ctype.h>
 
-#define address "asd"
-#define STRING_SIZE 132
+typedef struct{
+	int col, raw;
+} pos;
 
-char* create_message(int index, int* desk);
-int parse_message(char* message, int* desk);
-
+pos game_change_pos_right(int status, int desk[8][8], pos current);
+pos game_change_pos_left(int status, int desk[8][8], pos current);
+pos game_change_pos_up(int status, int desk[8][8], pos current);
+pos game_change_pos_down(int status, int desk[8][8], pos current);
 
 int main ()
-{
+{	
 	FILE * file = fopen("desk/desk.txt", "r");
 	int desk[8][8];
+	
 	for (int i = 0; i < 8; i++)
-		for(int j =0; j < 8; j++)
+		for (int j = 0; j < 8; j++)
 			fscanf(file, "%d", &desk[i][j]);
 	
-	puts("Матрица:");
-	printf("1 ");
+	
+	desk[0][1] = 1;
+	desk[2][3] = 1;
+	desk[1][6] = 1;
+	desk[3][2] = 1;
+	desk[5][5] = 0;
+	desk[5][7] = 0;
+	
+	puts ("Matrix");
 	for (int i = 0; i < 8; i++)
 	{
-		for (int j =0; j < 8; j++)
-			printf("%d ", desk[i][j]);
+		for (int j = 0; j < 8; j++)
+			printf ("%d ", desk[i][j]);
+		puts("");
 	}
 	
-	puts("");
-	puts("Строка");
+	int status = 1;
 	
-	char* result;
-	result = create_message(1, &desk[0][0]);
-	puts(result);
 	
-	//result stores message
+	pos current; 
+	current.raw = 0; 
+	current.col = 1;
 	
-	int n_index;
-	int n_desk[8][8];
 	
-	n_index = parse_message(result, &n_desk[0][0]);
 	
-	puts("Новая матрица:");
-	printf("%d ", n_index);
-	for (int i = 0; i < 8; i++)
+	while(1)
 	{
-		for (int j =0; j < 8; j++)
-			printf("%d ", n_desk[i][j]);
-	}
-	
-	free(result);
-	return 0;
-}
-
-char* create_message(int index, int* desk)
-{
-	int k = 2;
-    char* message = (char*) malloc (sizeof(char) * STRING_SIZE);
-
-    message[0] = (char) (index + '0');
-    message[1] = ' ';
-	
-	for(int i = 0; i < 64; i++)
-	{
-		message[k] = *(desk + i) + '0';
-		message[k + 1] = ' ';
-		k += 2;
-	}
-	
-    message[k] = '\0';
-	
-    return message;
-}
-
-
-int parse_message(char* message, int* desk)
-{
-    int index = (int) message[0] - '0';
-    message += 2;
-	int i = 0;
-    while(*message)
-    {
-        if (*(message) != ' ')
+		char c;
+		scanf("%c", &c);
+		switch(c)
 		{
-            *(desk + i) = *message - '0';
-			i++;
+			case('d'): current = game_change_pos_right(status, desk, current);
+					   break;
+					  
+			case('a'): current = game_change_pos_left(status, desk, current);
+					   break;
+					   
+			case('w'): current = game_change_pos_up(status, desk, current);
+					   break;
+					   
+			case('s'): current = game_change_pos_down(status, desk, current);
+					   break;
 		}
-		message++;
-    }
-	return index;
+		printf("raw = %d  col = %d\n", current.raw, current.col);
+	}
+
 }
+
+//TODO: create an enum
+// 1 eq UP
+// 2 eq RIGHT
+// 3 eq DOWN
+// 4 eq LEFT
+//pos game_change_pos(int status, int desk[8][8], pos current, int direction)
+//{
+//	for 
+
+//}
+
+/*
+pos game_change_pos_right(int status, int desk[8][8], pos cur)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		if (cur.raw - i > -1)
+			for (int j = cur.col + 1; j < 8; j++)
+				if (desk[i][j] == status)
+				{
+					pos new_pos;
+					new_pos.raw = i;
+					new_pos.col = j;
+					return new_pos;
+				}
+		if (cur.raw + i < 8)
+			for (int j = cur.col + 1; j < 8; j++)
+				if (desk[i][j] == status)
+				{
+					pos new_pos;
+					new_pos.raw = i;
+					new_pos.col = j;
+					return new_pos;
+				}
+	}
+	return cur;
+}*/
+
+
+pos game_change_pos_right(int status, int desk[8][8], pos current)
+{
+	for (int i = current.raw; i < 8; i++)
+		for (int j = current.col + 1; j < 8; j++)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	for (int i = current.raw - 1; i > -1; i--)
+		for (int j = current.col + 1; j < 8; j++)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	return current;
+}
+
+
+pos game_change_pos_left(int status, int desk[8][8], pos current)
+{
+	for (int i = current.raw; i < 8; i++)
+		for (int j = current.col - 1; j > -1; j--)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	for (int i = current.raw - 1; i > -1; i--)
+		for (int j = current.col - 1; j > -1; j--)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	return current;
+}
+
+
+pos game_change_pos_up(int status, int desk[8][8], pos current)
+{
+	for (int i = current.raw - 1; i > -1; i--)
+		for (int j = current.col; j < 8; j++)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}	
+	for (int i = current.raw - 1; i > -1; i--)
+		for (int j = current.col - 1; j > -1; j--)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	return current;
+}
+
+
+pos game_change_pos_down(int status, int desk[8][8], pos current)
+{
+	for (int i = current.raw + 1; i < 8; i++)
+		for (int j = current.col; j < 8; j++)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	for (int i = current.raw + 1; i < 8; i++)
+		for (int j = current.col - 1; j > -1; j--)
+			if (desk[i][j] == status)
+			{
+				pos new_pos;
+				new_pos.raw = i;
+				new_pos.col = j;
+				return new_pos;
+			}
+	return current;
+}
+
+
+
+
+
+
+
+
 
 
