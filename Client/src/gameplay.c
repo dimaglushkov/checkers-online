@@ -25,25 +25,7 @@ int* game_start(int status, int desk[8][8])
     {
         if (event.type == SDL_KEYDOWN  && !is_chosen)
         {
-            if (event.key.keysym.sym == SDLK_UP) {
-                cur = game_change_pos_up(status, desk, cur);
-
-            }
-
-            if (event.key.keysym.sym == SDLK_DOWN) {
-                cur = game_change_pos_down(status, desk, cur);
-
-            }
-
-            if (event.key.keysym.sym == SDLK_LEFT) {
-                cur = game_change_pos_left(status, desk, cur);
-
-            }
-
-            if (event.key.keysym.sym == SDLK_RIGHT) {
-                cur = game_change_pos_right(status, desk, cur);
-
-            }
+            // TODO: handle mouse clicks to select current checker;
 
             if (event.key.keysym.sym == SDLK_RETURN) {
                 is_chosen = 1;

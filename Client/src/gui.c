@@ -8,10 +8,14 @@ SDL_Window*  main_window = NULL;
 SDL_Surface* main_surface = NULL;
 SDL_Surface* checkers_surface = NULL;
 SDL_Surface* desk_surface = NULL;
-SDL_Rect small_checker_white, small_checker_black, checker, big_checker, not_selected, selected, whos_turn, desk_rect;
+SDL_Rect small_checker_white, small_checker_black,
+         checker_black, checker_white,
+         big_checker_black, big_checker_white,
+         not_selected, selected,
+         whos_turn, desk_rect;
 
 int init_create_mains(char* title);
-int init_game_elements(int status);
+int init_game_elements();
 
 int draw_intro (int connection_status)
 {
@@ -48,7 +52,7 @@ int draw_gameplay_base(int player_id, int status)
     SDL_Surface* base_surface;
     SDL_Rect from, to;
 
-    init_game_elements(player_id);
+    init_game_elements();
 
     base_surface = SDL_LoadBMP("../img/draw_gameplay_base.bmp");
     if (!base_surface)
@@ -73,15 +77,50 @@ int draw_gameplay_base(int player_id, int status)
 }
 
 
-int draw_gameplay(int player_id, int desk[8][8], char status)
+int draw_desk_checkers(int player_id, int desk[8][8], char status)
 {
 
     SDL_BlitSurface(desk_surface, NULL, main_surface, &desk_rect);
-    if (status)
+    if (status == 1)
+        SDL_BlitSurface(checkers_surface, &small_checker_white, main_surface, &whos_turn);
+    else
+        SDL_BlitSurface(checkers_surface, &small_checker_black, main_surface, &whos_turn);
 
+    SDL_Rect checker_on_desk;
+    checker_on_desk.x = 150;
+    checker_on_desk.y = 50;
+    checker_on_desk.w = checker_on_desk.h = 75;
 
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            switch (desk[i][j])
+            {
+                case (1):
+                    SDL_BlitSurface(checkers_surface, &checker_white, main_surface, &checker_on_desk);
+                    break;
 
+                case (2):
+                    SDL_BlitSurface(checkers_surface, &checker_black, main_surface, &checker_on_desk);
+                    break;
 
+                case (4):
+                    SDL_BlitSurface(checkers_surface, &big_checker_white, main_surface, &checker_on_desk);
+                    break;
+
+                case (5):
+                    SDL_BlitSurface(checkers_surface, &big_checker_black, main_surface, &checker_on_desk);
+                    break;
+
+                default:;
+            }
+
+            checker_on_desk.x += 75;
+        }
+        checker_on_desk.x = 150;
+        checker_on_desk.y += 75;
+    }
 
     SDL_UpdateWindowSurface(main_window);
     return 0;
@@ -119,42 +158,34 @@ int init_create_mains(char* title)
     return 0;
 }
 
-int init_game_elements(int status)
+int init_game_elements()
 {
 
     checkers_surface = SDL_LoadBMP("../img/draw_checkers.bmp");
-    desk_surface = SDL_LoadBMP("../img/desk.bmp");
+    desk_surface = SDL_LoadBMP("../img/draw_desk.bmp");
 
-    int i;
-    status == 1 ? (i = 0) : (i = 75) ;
+    small_checker_black.x = 0;      small_checker_white.x = 30;
+    small_checker_black.y = 450;    small_checker_white.y = 450;
+    small_checker_black.h = 30;     small_checker_white.h = 30;
+    small_checker_black.w = 30;     small_checker_white.w = 30;
 
-    small_checker_black.x = 0; small_checker_white.x = 30;
-    small_checker_black.y =    small_checker_white.y = 450;
-    small_checker_black.h =    small_checker_white.h = 30;
-    small_checker_black.w =    small_checker_white.w = 30;
+    checker_black.x = 0;            checker_white.x = 0;
+    checker_black.y = 75;           checker_white.y = 0;
+    checker_black.w = 75;           checker_white.w = 75;
+    checker_black.h = 75;           checker_white.h = 75;
 
-    checker.x = 0;
-    checker.y = i;
-    checker.w = 75;
-    checker.h = 75;
+    big_checker_black.x = 0;        big_checker_white.x = 0;
+    big_checker_black.y = 225;      big_checker_white.y = 150;
+    big_checker_black.w = 75;       big_checker_white.w = 75;
+    big_checker_black.h = 75;       big_checker_white.h = 75;
 
-    big_checker.x = 0;
-    big_checker.y = i + 150;
-    big_checker.w = 75;
-    big_checker.h = 75;
+    not_selected.x = 0;             selected.x = 0;
+    not_selected.y = 300;           selected.y = 375;
+    not_selected.h = 75;            selected.h = 75;
+    not_selected.w = 75;            selected.w = 75;
 
-    not_selected.x = 0;
-    not_selected.y = 300;
-    not_selected.h = 75;
-    not_selected.w = 75;
-
-    selected.x = 0;
-    selected.y = 375;
-    selected.h = 75;
-    selected.w = 75;
-
-    whos_turn.x = 240;
-    whos_turn.y = 500;
+    whos_turn.x = 255;
+    whos_turn.y = 655;
     whos_turn.h = whos_turn.w = 1;
 
     desk_rect.x = 150;

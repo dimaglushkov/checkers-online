@@ -32,12 +32,7 @@ int main(int argc, char* args[])
     status = parse_message(message, &desk[0][0]);
 
     draw_gameplay_base(player_id, status);
-
-    printf ("Received player's id: %d\n", player_id);
-    printf ("Received status: %d\n", status);
-
-
-
+    draw_desk_checkers(player_id, desk, status);
 
     SDL_Delay(10000);
     free(message);

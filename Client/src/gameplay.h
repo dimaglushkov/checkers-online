@@ -33,10 +33,6 @@ typedef struct {
 // (5)gp_become_big - стать дамкой
 
 pos game_init(int status, int desk[8][8]);
-pos game_change_pos_right(int status, int desk[8][8], pos current);
-pos game_change_pos_left(int status, int desk[8][8], pos current);
-pos game_change_pos_up(int status, int desk[8][8], pos current);
-pos game_change_pos_down(int status, int desk[8][8], pos current);
-
+pos game_select();
 
 #endif
