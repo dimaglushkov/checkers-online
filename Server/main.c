@@ -12,10 +12,8 @@
 #define PORT 2510
 #define STRING_SIZE 132
 
-// как работает сервер:
-// от пользователя прилетает строка длинной в 131 символ.
-// сначала проверя
-//
+//TODO: make this thing looks nice and AT LEAST readable
+
 //
 //0 2 0 2 0 2 0 2
 //2 0 2 0 2 0 2 0
@@ -26,10 +24,11 @@
 //1 0 1 0 1 0 1 0
 //0 1 0 1 0 1 0 1
 //
-//
-//
 
-char* update (char*);
+
+char* update (char* );
+char* init (int index);
+
 
 int main(int argc , char *argv[])
 {
@@ -123,6 +122,7 @@ int main(int argc , char *argv[])
             {
                 if( client_socket[i] == 0 )
                 {
+                    //when somebody connected
                     client_socket[i] = new_socket;
                     printf("Adding to list of sockets as %d\n" , i);
 
@@ -130,8 +130,8 @@ int main(int argc , char *argv[])
                         send(client_socket[0], "0\n", 3, 0);
                     if (i == 1)
                     {
-                        send(client_socket[0], "1\n", 3, 0);
-                        send(client_socket[1], "2\n", 3, 0);
+                        send(client_socket[0], init(1), STRING_SIZE, 0);
+                        send(client_socket[1], init(2), STRING_SIZE, 0);
                     }
                     break;
                 }
@@ -144,7 +144,7 @@ int main(int argc , char *argv[])
 
             if (FD_ISSET( sd , &readfds))
             {
-                if ((valread =  read( sd , buffer, 1024)) == 0)
+                if ((valread =  (int) read( sd , buffer, 1024)) == 0)
                 {
                     getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
                     printf("Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
@@ -169,6 +169,7 @@ int main(int argc , char *argv[])
         }
     }
 }
+
 
 
 
@@ -214,7 +215,7 @@ char* update(char* req)
         index == 1 ? index++ : index--;
 
     char* answer;
-    answer = (char*) malloc (sizeof(char) * STRING_SIZE);
+    answer = (char*) malloc (sizeof(char) * STRING_SIZE); // sizeof is optional
     answer[0] = (char) (index + '0');
     answer[1] = ' ';
     answer[2] = '\0';
@@ -224,5 +225,35 @@ char* update(char* req)
     puts (answer);
 
     return answer;
+}
+
+char* init(int index)
+{
+    const int buffer_size = 128;
+    char* desk_string = (char*) malloc (sizeof(char) * STRING_SIZE);
+    FILE * desk_file = fopen("../desk/desk.txt", "r");
+    char* buffer = malloc(buffer_size);
+
+
+    desk_string[0] = (char) (index + '0');
+    desk_string[1] = ' ';
+    desk_string[2] = '\0';
+
+
+    if (desk_file)
+    {
+        puts("creating initial string");
+        fgets(buffer, buffer_size, desk_file);
+        puts (buffer);
+        strcat(desk_string, buffer);
+        puts("initial string created");
+    }
+    else
+    {
+        puts("Error while opening file");
+    }
+
+    free(buffer);
+    return desk_string;
 }
 
