@@ -122,7 +122,7 @@ int main(int argc , char *argv[])
                 {
                     //when somebody connected
                     client_socket[i] = new_socket;
-                    printf("Adding to list of sockets as %d\n" , i);
+                    printf("[+]Adding to list of sockets as %d\n" , i);
 
                     //both players connected
                     if (i == 1)
@@ -148,7 +148,7 @@ int main(int argc , char *argv[])
                 if ((valread =  (int) read( sd , buffer, 1024)) == 0)
                 {
                     getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
-                    printf("Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+                    printf("[-]Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
 
                     close( sd );
                     client_socket[i] = 0;
@@ -179,10 +179,11 @@ char* update(char* req)
     int checkers[2];
     char index = (char) strtol(&req[0], NULL, 10);
 
-        puts("[+]INCOMING MESSAGE:");
-        puts ("[=====================]");
+        puts("[=]Message:");
         puts(req);
-        printf ("current index: %d\n", index);
+        puts ("[=====================]");
+
+    printf ("current index: %d\n", index);
 
     checkers[0] = 0;
     checkers[1] = 0;
@@ -226,7 +227,6 @@ char* update(char* req)
 
     strcpy(&answer[2], &req[2]);
 
-    puts ("[=====================]");
     puts (answer);
 
     return answer;

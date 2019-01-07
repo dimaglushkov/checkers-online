@@ -6,6 +6,7 @@ CMakeFiles/Client.dir/src/gameplay.c.o: ../src/gameplay.h
 CMakeFiles/Client.dir/src/gameplay.c.o: ../src/gui.h
 
 CMakeFiles/Client.dir/src/gui.c.o: ../src/gui.c
+CMakeFiles/Client.dir/src/gui.c.o: ../src/gui.h
 
 CMakeFiles/Client.dir/src/main.c.o: ../src/gameplay.h
 CMakeFiles/Client.dir/src/main.c.o: ../src/gui.h

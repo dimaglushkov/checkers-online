@@ -1,174 +1,287 @@
-#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_events.h>
 #include "gameplay.h"
 #include "gui.h"
 
-//TODO: optimize changing current checker algs
 
-// game_start - тут вызываются почти все оставльные функции для единого контекста
-// (1)game_init - все что нужно сделать при получении ответа от сервера
-// (2)game_change_pos - переключение на другую шашку
-// (3)int* game_get_options - определить возможные ходы, возвращает массив в положениями куда можно сходить
-// (4)game_move - совершить ход
-// (5)game_become_big - стать дамкой
+pos rect_to_pos(SDL_Rect);
+SDL_Rect pos_to_rect(pos);
+pos* find_options(int player_id, int desk[8][8], pos cur);
+pos* find_options_big(int player_id, int desk[8][8], pos cur);
+void set_option(pos* where_to, int x, int y);
+int handle_selected_option(SDL_Rect*);
+pos make_move(int desk[8][8], pos cur, pos new);
 
-int* game_start(int status, int desk[8][8])
+
+int game_start(int player_id, int desk[8][8])
 {
     pos cur;
     SDL_Event event;
-    int is_chosen = 0;
-
-    cur = game_init(status, desk);
-
 
     while(SDL_WaitEvent(&event))
     {
-        if (event.type == SDL_KEYDOWN  && !is_chosen)
+        if (event.type == SDL_MOUSEBUTTONDOWN )
         {
-            // TODO: handle mouse clicks to select current checker;
 
-            if (event.key.keysym.sym == SDLK_RETURN) {
-                is_chosen = 1;
-                //draw
-            }
-        }
-        if (event.type == SDL_KEYDOWN  && is_chosen)
-        {
-            if(event.key.keysym.sym == SDLK_ESCAPE)
+            //handling mouse press on menu button
+            //TODO: move numbers to consts
+            if (event.button.x > 700 && event.button.x < 876
+                        && event.button.y > 675 && event.button.y < 726)
             {
-                is_chosen = 0;
+                //TODO: pop up menu
+                puts ("Menu pressed");
+                return NULL;
+            }
 
+            //handling mouse down on desk
+            if (event.button.x > 150 && event.button.x < 750
+                        && event.button.y > 50 && event.button.y < 650)
+            {
+                //col equals x
+                //raw equals y
+                pos new_cur;
+
+                new_cur.col = (event.button.x - 150) / 75;
+                new_cur.raw = (event.button.y - 50) / 75;
+
+                printf("selected: [%d; %d]\n", new_cur.raw, new_cur.col);
+
+                //if selected is checker
+                if(desk[new_cur.raw][new_cur.col] == player_id
+                    || desk[new_cur.raw][new_cur.col] == (player_id + 5))
+                {
+                    cur.raw= new_cur.raw;
+                    cur.col = new_cur.col;
+
+                    draw_selected(pos_to_rect(cur));
+
+
+                    pos *options;
+                    desk[new_cur.raw][new_cur.col] == (player_id + 5) ?
+                        (options = find_options_big(player_id, desk, cur))
+                        :
+                        (options = find_options(player_id, desk, cur));
+
+                    SDL_Rect * options_rect;
+                    options_rect = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+                    for (int k = 0; k < 4; k++)
+                        if (options[k].col != -1)
+                            options_rect[k] = pos_to_rect(options[k]);
+                        else
+                            options_rect[k].x = 0;
+
+                        
+                    draw_options(options_rect);
+                    // return index of selected option handle_selected_option(options_rect);
+
+                    cur = make_move(desk, cur, options[handle_selected_option(options_rect)]);
+
+                    free(options);
+                    free(options_rect);
+                    
+                    return 0;
+                }
             }
 
         }
+
     }
 
 
 }
 
-/*
-pos* game_get_options (int status, int desk[8][8], pos cur)
+
+pos make_move(int desk[8][8], pos cur, pos new)
 {
-    pos* opts = (pos*) malloc(sizeof(pos) * 4);
+    desk[new.raw][new.col] = desk[cur.raw][cur.col];
+    desk[cur.raw][cur.col] = 0;
 
-}*/
+    if (abs(cur.col - new.col) > 1)
+        desk[(cur.raw + new.raw) / 2][(cur.col + new.col) / 2] = 0;
 
-
-pos game_change_pos_right(int status, int desk[8][8], pos current)
-{
-    for (int i = current.raw; i < 8; i++)
-        for (int j = current.col + 1; j < 8; j++)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    for (int i = current.raw - 1; i > -1; i--)
-        for (int j = current.col + 1; j < 8; j++)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    return current;
+    cur.col = new.col;
+    cur.raw = new.raw;
 }
 
 
-pos game_change_pos_left(int status, int desk[8][8], pos current)
+int handle_selected_option(SDL_Rect* opt_rect)
 {
-    for (int i = current.raw; i < 8; i++)
-        for (int j = current.col - 1; j > -1; j--)
-            if (desk[i][j] == status)
+    SDL_Event event;
+
+    while(SDL_WaitEvent(&event))
+    {
+        if (event.type == SDL_MOUSEBUTTONDOWN )
+        {
+            for (int i = 0; i < 4; i++)
             {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
+                if (event.button.x > opt_rect[i].x 
+                && event.button.x < (opt_rect[i].x + 75)
+                && event.button.y < (opt_rect[i].y + 75)
+                && event.button.y < (opt_rect[i].y + 75))
+                    
+                    return i;
             }
-    for (int i = current.raw - 1; i > -1; i--)
-        for (int j = current.col - 1; j > -1; j--)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    return current;
+        }
+    }
 }
 
-
-pos game_change_pos_up(int status, int desk[8][8], pos current)
+pos rect_to_pos(SDL_Rect rect)
 {
-    for (int i = current.raw - 1; i > -1; i--)
-        for (int j = current.col; j < 8; j++)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    for (int i = current.raw - 1; i > -1; i--)
-        for (int j = current.col - 1; j > -1; j--)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    return current;
+    pos position;
+    position.col = (rect.x - 150 ) / 75;
+    position.raw = (rect.y - 50 )  / 75;
+
+    return position;
 }
 
-
-pos game_change_pos_down(int status, int desk[8][8], pos current)
+SDL_Rect pos_to_rect(pos position)
 {
-    for (int i = current.raw + 1; i < 8; i++)
-        for (int j = current.col; j < 8; j++)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    for (int i = current.raw + 1; i < 8; i++)
-        for (int j = current.col - 1; j > -1; j--)
-            if (desk[i][j] == status)
-            {
-                pos new_pos;
-                new_pos.raw = i;
-                new_pos.col = j;
-                return new_pos;
-            }
-    return current;
+    SDL_Rect rect;
+    rect.x = (position.col * 75) + 150;
+    rect.y = (position.raw * 75)+ 50;
+    rect.h = rect.w = 75;
+
+    return rect;
 }
 
-pos game_init(int status, int desk[8][8])
+void set_option(pos* where_to, int x, int y)
 {
-    pos current;
-
-    current.col = 0;
-    current.raw = 0;
-
-    for(int i = 0; i < 8; i++)
-        for(int j = 0; j < 8; j++)
-            if (desk[i][j] == status)
-            {
-                current.raw = i;
-                current.col = j;
-                return current;
-            }
-
-    return current;
+    where_to -> col = x;
+    where_to -> raw = y;
 }
 
+pos* find_options(int player_id, int desk[8][8], pos cur)
+{
+
+    pos* options = (pos*) malloc(sizeof(pos) * 4);
+
+    int opponent_id;
+
+    opponent_id = player_id == 1 ? 2 : 1;
+
+    int nx, ny;
+
+
+    //up+left
+    ny = cur.raw - 1;
+    nx = cur.col - 1;
+
+    if (nx > -1 && ny > -1)
+    {
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+        && (nx - 1) > -1
+        && (ny - 1) > -1
+        && desk[ny - 1][nx - 1] == 0)
+        {
+            set_option(&options[0], nx - 1, ny - 1);
+        }
+        else if (desk[ny][nx] == 0)
+        {
+            set_option(&options[0], nx, ny);
+        }
+        else
+        {
+            set_option(&options[0], -1, -1);
+
+        }
+    }
+    else
+    {
+        set_option(&options[0], -1, -1);
+    }
 
 
 
+    //up+right
+    ny = cur.raw - 1;
+    nx = cur.col + 1;
 
+    if (nx < 8 && ny > -1)
+    {
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+            && (nx + 1) < 8
+            && (ny - 1) > -1
+            && desk[ny - 1][nx + 1] == 0)
+        {
+            set_option(&options[1], nx + 1, ny - 1);
+        }
+        else if (desk[ny][nx] == 0)
+        {
+            set_option(&options[1], nx, ny);
+        }
+        else
+        {
+            set_option(&options[1], -1, -1);
+
+        }
+    }
+    else
+    {
+        set_option(&options[1], -1, -1);
+    }
+
+
+    //down+left
+    ny = cur.raw + 1;
+    nx = cur.col - 1;
+
+    if (nx > -1 && ny < 8)
+    {
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+            && (nx - 1) > -1
+            && (ny + 1) < 8
+            && desk[ny + 1][nx - 1] == 0)
+        {
+            set_option(&options[2], nx - 1, ny + 1);
+        }
+        else if (desk[ny][nx] == 0)
+        {
+            set_option(&options[2], nx, ny);
+        }
+        else
+        {
+            set_option(&options[2], -1, -1);
+
+        }
+    }
+    else
+    {
+        set_option(&options[2], -1, -1);
+    }
+
+
+    //down + right
+    ny = cur.raw + 1;
+    nx = cur.col + 1;
+
+    if (nx < 8 && ny < 8)
+    {
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+            && (nx + 1) < 8
+            && (ny + 1) < 8
+            && desk[ny + 1][nx + 1] == 0)
+        {
+            set_option(&options[3], nx + 1, ny + 1);
+        }
+        else if (desk[ny][nx] == 0)
+        {
+            set_option(&options[3], nx, ny);
+        }
+        else
+        {
+            set_option(&options[3], -1, -1);
+
+        }
+    }
+    else
+    {
+        set_option(&options[3], -1, -1);
+    }
+
+    return options;
+}
+
+pos* find_options_big(int player_id, int desk[8][8], pos cur)
+{
+    pos* a = NULL;
+    return a;
+}

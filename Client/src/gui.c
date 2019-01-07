@@ -1,5 +1,5 @@
-#include <SDL2/SDL.h>
-#include <string.h>
+#include "gui.h"
+
 
 const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750;
 const char* GAME_TITLE = "Checkers-online(ver. 0.1)";
@@ -11,10 +11,10 @@ SDL_Surface* desk_surface = NULL;
 SDL_Rect small_checker_white, small_checker_black,
          checker_black, checker_white,
          big_checker_black, big_checker_white,
-         not_selected, selected,
+         option, selected,
          whos_turn, desk_rect;
 
-int init_create_mains(char* title);
+int init_create_mains(const char* title);
 int init_game_elements();
 
 int draw_intro (int connection_status)
@@ -36,6 +36,7 @@ int draw_intro (int connection_status)
         case 0:
             loading_surface = SDL_LoadBMP("../img/draw_waiting.bmp");
             break;
+        default:break;
     }
 
     SDL_BlitSurface(loading_surface, NULL, main_surface, NULL);
@@ -46,11 +47,9 @@ int draw_intro (int connection_status)
 
 }
 
-
 int draw_gameplay_base(int player_id, int status)
 {
     SDL_Surface* base_surface;
-    SDL_Rect from, to;
 
     init_game_elements();
 
@@ -76,9 +75,9 @@ int draw_gameplay_base(int player_id, int status)
     return 0;
 }
 
-
-int draw_desk_checkers(int player_id, int desk[8][8], char status)
+int draw_desk_checkers(int player_id, int desk[8][8], int status)
 {
+    //TODO: draw small-checkers on sides
 
     SDL_BlitSurface(desk_surface, NULL, main_surface, &desk_rect);
     if (status == 1)
@@ -126,6 +125,27 @@ int draw_desk_checkers(int player_id, int desk[8][8], char status)
     return 0;
 }
 
+int draw_selected(SDL_Rect draw_at)
+{
+    SDL_BlitSurface(checkers_surface, &selected, main_surface, &draw_at);
+    SDL_UpdateWindowSurface(main_window);
+    return 0;
+}
+
+int draw_options(SDL_Rect* opt_rect)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (opt_rect[i].x == 0)
+            continue;
+
+        SDL_BlitSurface(checkers_surface, &option, main_surface, &opt_rect[i]);
+    }
+    SDL_UpdateWindowSurface(main_window);
+
+    return 0;
+}
+
 int draw_destroy()
 {
     SDL_FreeSurface( main_surface );
@@ -137,8 +157,7 @@ int draw_destroy()
 }
 
 
-
-int init_create_mains(char* title)
+int init_create_mains(const char* title)
 {
     main_window = SDL_CreateWindow(title,
                                    SDL_WINDOWPOS_UNDEFINED,
@@ -179,10 +198,10 @@ int init_game_elements()
     big_checker_black.w = 75;       big_checker_white.w = 75;
     big_checker_black.h = 75;       big_checker_white.h = 75;
 
-    not_selected.x = 0;             selected.x = 0;
-    not_selected.y = 300;           selected.y = 375;
-    not_selected.h = 75;            selected.h = 75;
-    not_selected.w = 75;            selected.w = 75;
+    option.x = 0;             selected.x = 0;
+    option.y = 375;           selected.y = 300;
+    option.h = 75;            selected.h = 75;
+    option.w = 75;            selected.w = 75;
 
     whos_turn.x = 380;
     whos_turn.y = 695;
