@@ -23,13 +23,12 @@ int game_start(int player_id, int desk[8][8])
         {
 
             //handling mouse press on menu button
-            //TODO: move numbers to consts
             if (event.button.x > 700 && event.button.x < 876
                         && event.button.y > 675 && event.button.y < 726)
             {
                 //TODO: pop up menu
                 puts ("Menu pressed");
-                return NULL;
+                return 0;
             }
 
             //handling mouse down on desk

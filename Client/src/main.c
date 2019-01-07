@@ -35,29 +35,34 @@ int main(int argc, char* args[])
     draw_gameplay_base(player_id, status);
     draw_desk_checkers(player_id, desk, status);
 
-    game_start(player_id, desk);
-
-
     //SDL_Delay(2000);
 
 
     while (1)
     {
-        message = receive_message(socket);
-        status = parse_message(message, &desk[0][0]);
 
-        if (status > 2)
-            break;
 
-        draw_desk_checkers(player_id, desk, status);
 
-        game_start(player_id, desk);
-        status == 1 ? status++ : status--;
+        if (status == player_id)
+        {
 
-        draw_desk_checkers(player_id, desk, status);
+            draw_desk_checkers(player_id, desk, status);
 
-        message = create_message(player_id, desk);
-        send_message(socket, message);
+            game_start(player_id, desk);
+            status == 1 ? status++ : status--;
+
+            draw_desk_checkers(player_id, desk, status);
+
+            message = create_message(player_id, desk);
+            send_message(socket, message);
+        }
+        else
+        {
+            message = receive_message(socket);
+            status = parse_message(message, &desk[0][0]);
+            if (status > 2)
+                break;
+        }
 
     }
 

@@ -6,14 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c
-SDL2/SDL_events.h
--
-gameplay.h
-/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h
-gui.h
-/home/allacee/CLionProjects/checkers-online/Client/src/gui.h
-
 /home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h
 
 /home/allacee/CLionProjects/checkers-online/Client/src/gui.h

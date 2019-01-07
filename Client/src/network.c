@@ -17,7 +17,7 @@ int create_connection(const char* ADDRESS, int PORT)
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        puts("Error: Can't create socket.");
+        puts("[-]Error: Can't create socket.");
         return -1;
     }
 
@@ -28,13 +28,13 @@ int create_connection(const char* ADDRESS, int PORT)
 
     if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
     {
-        puts("Error: Invalid address.");
+        puts("[-]Error: Invalid address.");
         return -1;
     }
 
     if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
     {
-        puts("Error: Connection failed.");
+        puts("[-]Error: Connection failed.");
         return -1;
     }
 
@@ -72,9 +72,9 @@ char* receive_message(int socket)
     char* message;
     message = (char*) malloc(STRING_SIZE * sizeof(char));
     read(socket, message, STRING_SIZE);
-    puts("[+]Received message:");
-    puts(message);
-    puts("[========]");
+    puts("[=]Received message:");
+    printf("[=]%s\n", message);
+    puts("[==========]");
     return message;
 }
 
@@ -83,9 +83,9 @@ int receive_player_id(int socket)
     char* message;
     message = (char*) malloc(2 * sizeof(char));
     read(socket, message, 2);
-    puts("[+]Received id message:");
-    puts(message);
-    puts("[========]");
+    puts("[=]Received id message:");
+    printf("[=]%s\n", message);
+    puts("[==========]");
     int res = message[0] - '0';
     free(message);
     return res;
