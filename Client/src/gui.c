@@ -60,8 +60,8 @@ int draw_gameplay_base(int player_id, int status)
 
     SDL_Rect status_bar;
 
-    status_bar.x = 550;
-    status_bar.y = 7;
+    status_bar.x = 380;
+    status_bar.y = 663;
     status_bar.w = status_bar.h = 1;
 
     if (player_id == 1)
@@ -184,8 +184,8 @@ int init_game_elements()
     not_selected.h = 75;            selected.h = 75;
     not_selected.w = 75;            selected.w = 75;
 
-    whos_turn.x = 255;
-    whos_turn.y = 655;
+    whos_turn.x = 380;
+    whos_turn.y = 695;
     whos_turn.h = whos_turn.w = 1;
 
     desk_rect.x = 150;
