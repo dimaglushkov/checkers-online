@@ -82,7 +82,7 @@ int receive_player_id(int socket)
 {
     char* message;
     message = (char*) malloc(2 * sizeof(char));
-    read(socket, message, 2);
+    recv(socket, message, 2, 0);
     puts("[=]Received id message:");
     printf("[=]%s\n", message);
     puts("[==========]");

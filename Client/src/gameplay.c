@@ -1,84 +1,96 @@
 #include <SDL2/SDL_events.h>
 #include "gameplay.h"
+#include "network.h"
 #include "gui.h"
 
 
-pos rect_to_pos(SDL_Rect);
-SDL_Rect pos_to_rect(pos);
-pos* find_options(int player_id, int desk[8][8], pos cur);
-pos* find_options_big(int player_id, int desk[8][8], pos cur);
-void set_option(pos* where_to, int x, int y);
-int handle_selected_option(SDL_Rect*);
-pos make_move(int desk[8][8], pos cur, pos new);
+pos_t rect_to_pos_t(SDL_Rect);
+SDL_Rect pos_t_to_rect(pos_t);
+pos_t* find_options(int player_id, int desk[8][8], pos_t cur_pos);
+pos_t* find_options_big(int player_id, int desk[8][8], pos_t cur_pos);
+void set_option(pos_t* where_to, int x, int y);
+int handle_selected_option(SDL_Rect* opt_rect, int x, int y);
+pos_t make_move(int desk[8][8], pos_t cur_pos, pos_t new);
+int count_options(pos_t options_pos[]);
+int select_checker(int player_id, pos_t *cur_pos, pos_t *new_cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect);
 
 
-int game_start(int player_id, int desk[8][8])
+int game_start(int player_id, int desk[8][8], int status)
 {
-    pos cur;
+    pos_t cur_pos;
     SDL_Event event;
+    int is_selected = 0, num_of_options ;
+    pos_t *options_pos;
+    SDL_Rect * options_rect;
+
 
     while(SDL_WaitEvent(&event))
     {
         if (event.type == SDL_MOUSEBUTTONDOWN )
         {
-
             //handling mouse press on menu button
-            if (event.button.x > 700 && event.button.x < 876
+            /*if (event.button.x > 700 && event.button.x < 876
                         && event.button.y > 675 && event.button.y < 726)
             {
-                //TODO: pop up menu
                 puts ("Menu pressed");
-                return 0;
-            }
+                return -1;
+            }*/
 
             //handling mouse down on desk
             if (event.button.x > 150 && event.button.x < 750
                         && event.button.y > 50 && event.button.y < 650)
             {
-                //col equals x
-                //raw equals y
-                pos new_cur;
 
-                new_cur.col = (event.button.x - 150) / 75;
-                new_cur.raw = (event.button.y - 50) / 75;
+                pos_t new_cur_pos;
 
-                printf("selected: [%d; %d]\n", new_cur.raw, new_cur.col);
+                new_cur_pos.col = (event.button.x - 150) / 75;
+                new_cur_pos.raw = (event.button.y - 50) / 75;
 
                 //if selected is checker
-                if(desk[new_cur.raw][new_cur.col] == player_id
-                    || desk[new_cur.raw][new_cur.col] == (player_id + 5))
+                if(desk[new_cur_pos.raw][new_cur_pos.col] == player_id
+                || desk[new_cur_pos.raw][new_cur_pos.col] == (player_id + 5))
                 {
-                    cur.raw= new_cur.raw;
-                    cur.col = new_cur.col;
 
-                    draw_selected(pos_to_rect(cur));
+                    if (is_selected)
+                        draw_desk_checkers(player_id, desk, status);
 
+                    is_selected = select_checker(player_id, &cur_pos, &new_cur_pos, desk, &options_pos, &options_rect);
 
-                    pos *options;
-                    desk[new_cur.raw][new_cur.col] == (player_id + 5) ?
-                        (options = find_options_big(player_id, desk, cur))
-                        :
-                        (options = find_options(player_id, desk, cur));
+                    puts("Selected");
+                    continue;
 
-                    SDL_Rect * options_rect;
-                    options_rect = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
-                    for (int k = 0; k < 4; k++)
-                        if (options[k].col != -1)
-                            options_rect[k] = pos_to_rect(options[k]);
-                        else
-                            options_rect[k].x = 0;
-
-                        
-                    draw_options(options_rect);
-                    // return index of selected option handle_selected_option(options_rect);
-
-                    cur = make_move(desk, cur, options[handle_selected_option(options_rect)]);
-
-                    free(options);
-                    free(options_rect);
-                    
-                    return 0;
                 }
+
+
+
+                if (is_selected)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        puts("trying to move");
+                        printf("n_c_p.raw = %d\nn_c_p.col = %d\noptions[%d].raw = %d\noptions[%d].col  %d\n", new_cur_pos.raw, new_cur_pos.col, i, options_pos[i].raw, i, options_pos[i].raw);
+                        if (new_cur_pos.raw == options_pos[i].raw
+                        && new_cur_pos.col == options_pos[i].col)
+                        {
+
+                            int needed_id = handle_selected_option(options_rect, event.button.x, event.button.y);
+                            cur_pos = make_move(desk, cur_pos, options_pos[needed_id]);
+
+                            if (options_pos != NULL)
+                                free(options_pos);
+                            if (options_rect != NULL)
+                                free(options_rect);
+
+
+
+                            draw_desk_checkers(player_id, desk, status);
+
+                            puts("move made");
+                            return status == 1? 2 : 1;
+                        }
+                    }
+                }
+
             }
 
         }
@@ -88,70 +100,111 @@ int game_start(int player_id, int desk[8][8])
 
 }
 
-
-pos make_move(int desk[8][8], pos cur, pos new)
+int select_checker(int player_id, pos_t *cur_pos, pos_t *new_cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect)
 {
-    desk[new.raw][new.col] = desk[cur.raw][cur.col];
-    desk[cur.raw][cur.col] = 0;
+    cur_pos->raw = new_cur_pos->raw;
+    cur_pos->col = new_cur_pos->col;
 
-    if (abs(cur.col - new.col) > 1)
-        desk[(cur.raw + new.raw) / 2][(cur.col + new.col) / 2] = 0;
+    draw_selected(pos_t_to_rect(*cur_pos));
 
-    cur.col = new.col;
-    cur.raw = new.raw;
+    desk[new_cur_pos->raw][new_cur_pos->col] == (player_id + 5) ?
+    (*options_pos = find_options_big(player_id, desk, *cur_pos))
+    :
+    (*options_pos = find_options(player_id, desk, *cur_pos));
+
+    *options_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect) * 4);
+    for (int k = 0; k < 4; k++)
+        (*options_rect)[k] = pos_t_to_rect((*options_pos)[k]);
+
+    draw_options(*options_rect);
+    return 1;
+
+}
+
+int count_options(pos_t options_pos[])
+{
+    int num = 0;
+    for(int i = 0; i < 4; i++)
+        if(options_pos[i].raw != -1)
+            num++;
+
+    return num;
 }
 
 
-int handle_selected_option(SDL_Rect* opt_rect)
+pos_t make_move(int desk[8][8], pos_t cur_pos, pos_t new)
 {
-    SDL_Event event;
+    desk[new.raw][new.col] = desk[cur_pos.raw][cur_pos.col];
+    desk[cur_pos.raw][cur_pos.col] = 0;
 
-    while(SDL_WaitEvent(&event))
+    if (abs(cur_pos.col - new.col) > 1)
+        desk[(cur_pos.raw + new.raw) / 2][(cur_pos.col + new.col) / 2] = 0;
+
+    cur_pos.col = new.col;
+    cur_pos.raw = new.raw;
+}
+
+
+int handle_selected_option(SDL_Rect* opt_rect, int x, int y)
+{
+
+    for (int i = 0; i < 4; i++)
     {
-        if (event.type == SDL_MOUSEBUTTONDOWN )
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                if (event.button.x > opt_rect[i].x 
-                && event.button.x < (opt_rect[i].x + 75)
-                && event.button.y < (opt_rect[i].y + 75)
-                && event.button.y < (opt_rect[i].y + 75))
-                    
-                    return i;
-            }
-        }
+        if (x > opt_rect[i].x
+        && x < (opt_rect[i].x + 75)
+        && y < (opt_rect[i].y + 75)
+        && y < (opt_rect[i].y + 75))
+
+            return i;
     }
+
+
 }
 
-pos rect_to_pos(SDL_Rect rect)
+pos_t rect_to_pos_t(SDL_Rect rect)
 {
-    pos position;
+    pos_t position;
     position.col = (rect.x - 150 ) / 75;
     position.raw = (rect.y - 50 )  / 75;
 
     return position;
 }
 
-SDL_Rect pos_to_rect(pos position)
+SDL_Rect pos_t_to_rect(pos_t position)
 {
     SDL_Rect rect;
-    rect.x = (position.col * 75) + 150;
-    rect.y = (position.raw * 75)+ 50;
-    rect.h = rect.w = 75;
 
+    if(position.col == -1)
+    {
+
+        rect.x = 0;
+        rect.y = 0;
+        rect.h = 0;
+        rect.w = 0;
+
+    }
+    else
+    {
+
+        rect.x = (position.col * 75) + 150;
+        rect.y = (position.raw * 75)+ 50;
+        rect.h = 75;
+        rect.w = 75;
+
+    }
     return rect;
 }
 
-void set_option(pos* where_to, int x, int y)
+void set_option(pos_t* where_to, int x, int y)
 {
     where_to -> col = x;
     where_to -> raw = y;
 }
 
-pos* find_options(int player_id, int desk[8][8], pos cur)
+pos_t* find_options(int player_id, int desk[8][8], pos_t cur_pos)
 {
 
-    pos* options = (pos*) malloc(sizeof(pos) * 4);
+    pos_t* options = (pos_t*) malloc(sizeof(pos_t) * 4);
 
     int opponent_id;
 
@@ -161,8 +214,8 @@ pos* find_options(int player_id, int desk[8][8], pos cur)
 
 
     //up+left
-    ny = cur.raw - 1;
-    nx = cur.col - 1;
+    ny = cur_pos.raw - 1;
+    nx = cur_pos.col - 1;
 
     if (nx > -1 && ny > -1)
     {
@@ -191,8 +244,8 @@ pos* find_options(int player_id, int desk[8][8], pos cur)
 
 
     //up+right
-    ny = cur.raw - 1;
-    nx = cur.col + 1;
+    ny = cur_pos.raw - 1;
+    nx = cur_pos.col + 1;
 
     if (nx < 8 && ny > -1)
     {
@@ -220,8 +273,8 @@ pos* find_options(int player_id, int desk[8][8], pos cur)
 
 
     //down+left
-    ny = cur.raw + 1;
-    nx = cur.col - 1;
+    ny = cur_pos.raw + 1;
+    nx = cur_pos.col - 1;
 
     if (nx > -1 && ny < 8)
     {
@@ -249,8 +302,8 @@ pos* find_options(int player_id, int desk[8][8], pos cur)
 
 
     //down + right
-    ny = cur.raw + 1;
-    nx = cur.col + 1;
+    ny = cur_pos.raw + 1;
+    nx = cur_pos.col + 1;
 
     if (nx < 8 && ny < 8)
     {
@@ -279,8 +332,8 @@ pos* find_options(int player_id, int desk[8][8], pos cur)
     return options;
 }
 
-pos* find_options_big(int player_id, int desk[8][8], pos cur)
+pos_t* find_options_big(int player_id, int desk[8][8], pos_t cur_pos)
 {
-    pos* a = NULL;
+    pos_t* a = NULL;
     return a;
 }

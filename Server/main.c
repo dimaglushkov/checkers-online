@@ -131,8 +131,10 @@ int main(int argc , char *argv[])
                         send(client_socket[0], "1", 2, 0);
                         send(client_socket[1], "2", 2, 0);
                         //sending initial messages to start game
-                        send(client_socket[0], init(1), STRING_SIZE, 0);
-                        send(client_socket[1], init(1), STRING_SIZE, 0);
+                        char * initial_message = init(1);
+                        send(client_socket[0], initial_message, STRING_SIZE, 0);
+                        send(client_socket[1], initial_message, STRING_SIZE, 0);
+                        free(initial_message);
                     }
                     break;
                 }
@@ -176,58 +178,45 @@ int main(int argc , char *argv[])
 
 char* update(char* req)
 {
+
     int checkers[2];
-    char index = (char) strtol(&req[0], NULL, 10);
+    int index = (char)(req[0] - '0');
 
-        puts("[=]Message:");
-        puts(req);
-        puts ("[=====================]");
+    char opponent = (char) (index == 1 ? '2' : '1');
 
-    printf ("current index: %d\n", index);
+        printf("[=]Server received message:%s\n", req);
+        printf("[!] received index is %d\n", index);
 
     checkers[0] = 0;
     checkers[1] = 0;
 
     for (int i = 2; req[i] != '\0'; i++)
     {
-        if (index == '1')
-            switch (req[i])
-            {
-                case ('2'): checkers[0]++;
-                            break;
-
-                case ('5'): checkers[1]++;
-                            break;
-
-                default: ;
-            }
-        else
-            switch (req[i])
-            {
-                case ('1'): checkers[0]++;
-                        break;
-
-                case ('4'): checkers[1]++;
-                        break;
-
-                default: ;
-            }
+        if (req[i] == opponent)
+            checkers[0]++;
+        else if (req[i] == opponent + 5)
+            checkers[1]++;
     }
-        printf("usual checkers: %d, big checkers: %d\n",checkers[0], checkers[1]);
+
     if (checkers[0] == 0 && checkers[1] == 0)
         index += 5;
     else
-        index == 1 ? index++ : index--;
+        index = opponent - '0';
+
+
+    printf("[!] checkers: %d\n", checkers[0]);
+    printf("[!] big checkers: %d\n", checkers[1]);
+    printf("[!] new index is %d\n", index);
 
     char* answer;
-    answer = (char*) malloc (sizeof(char) * STRING_SIZE); // sizeof is optional
+    answer = (char*) malloc (sizeof(char) * STRING_SIZE);
     answer[0] = (char) (index + '0');
     answer[1] = ' ';
     answer[2] = '\0';
 
     strcpy(&answer[2], &req[2]);
 
-    puts (answer);
+    printf("[+]Server answer: %s\n", answer);
 
     return answer;
 }

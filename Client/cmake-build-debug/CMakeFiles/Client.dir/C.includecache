@@ -6,23 +6,21 @@
 
 #IncludeRegexTransform: 
 
+/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c
+SDL2/SDL_events.h
+-
+gameplay.h
+/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h
+network.h
+/home/allacee/CLionProjects/checkers-online/Client/src/network.h
+gui.h
+/home/allacee/CLionProjects/checkers-online/Client/src/gui.h
+
 /home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h
 
 /home/allacee/CLionProjects/checkers-online/Client/src/gui.h
 SDL2/SDL.h
 -
-
-/home/allacee/CLionProjects/checkers-online/Client/src/main.c
-stdio.h
--
-SDL2/SDL_timer.h
--
-gui.h
-/home/allacee/CLionProjects/checkers-online/Client/src/gui.h
-network.h
-/home/allacee/CLionProjects/checkers-online/Client/src/network.h
-gameplay.h
-/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h
 
 /home/allacee/CLionProjects/checkers-online/Client/src/network.h
 
