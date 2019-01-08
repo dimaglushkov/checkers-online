@@ -28,7 +28,7 @@
 
 char* update (char* );
 char* init (int index);
-
+int is_ended(char* message);
 
 int main(int argc , char *argv[])
 {
@@ -158,14 +158,29 @@ int main(int argc , char *argv[])
 
                 else
                 {
+                    char selected;
                     if (sd == client_socket[0])
+                    {
                         sd = client_socket[1];
+                        selected = 1;
+                    }
                     else
+                    {
                         sd = client_socket[0];
-
+                        selected = 0;
+                    }
                     buffer[valread] = '\0';
                     char* response = update(buffer);
                     send(sd , response , strlen(buffer) , 0 );
+
+                    //send message about games end
+                    if (is_ended(response))
+                    {
+                        selected == 0 ? selected++ : selected--;
+                        sd = client_socket[selected];
+                        send(sd , response , strlen(buffer) , 0 );
+                    }
+
                     free(response);
                 }
             }
@@ -246,5 +261,10 @@ char* init(int index)
 
     free(buffer);
     return desk_string;
+}
+
+int is_ended(char* message)
+{
+    return message[0] > 2 ? 1 : 0;
 }
 
