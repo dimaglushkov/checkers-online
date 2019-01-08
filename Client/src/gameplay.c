@@ -6,23 +6,25 @@
 
 pos_t rect_to_pos_t(SDL_Rect);
 SDL_Rect pos_t_to_rect(pos_t);
-pos_t* find_options(int player_id, int desk[8][8], pos_t cur_pos);
+pos_t* find_options(int player_id, int opponent_id, int desk[8][8], pos_t cur_pos);
 pos_t* find_options_big(int player_id, int desk[8][8], pos_t cur_pos);
+pos_t* find_options_after(int player_id, int opponent_id, int desk[8][8], pos_t cur_pos);
 void set_option(pos_t* where_to, int x, int y);
 int handle_selected_option(SDL_Rect* opt_rect, int x, int y);
 pos_t make_move(int desk[8][8], pos_t cur_pos, pos_t new);
 int count_options(pos_t options_pos[]);
-int select_checker(int player_id, pos_t *cur_pos, pos_t *new_cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect);
+int select_checker(int player_id, pos_t *cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect);
 
 
-int game_start(int player_id, int desk[8][8], int status)
+
+int game_start(int player_id, int opponent_id, int desk[8][8], int status)
 {
     pos_t cur_pos;
     SDL_Event event;
     int is_selected = 0, num_of_options ;
     pos_t *options_pos;
     SDL_Rect * options_rect;
-
+    int num_of_checkers_alive = count_checkers_on_desk(opponent_id, desk);
 
     while(SDL_WaitEvent(&event))
     {
@@ -54,9 +56,17 @@ int game_start(int player_id, int desk[8][8], int status)
                     if (is_selected)
                         draw_desk_checkers(player_id, desk, status);
 
-                    is_selected = select_checker(player_id, &cur_pos, &new_cur_pos, desk, &options_pos, &options_rect);
+                    cur_pos.raw = new_cur_pos.raw;
+                    cur_pos.col = new_cur_pos.col;
 
-                    puts("Selected");
+
+                    desk[cur_pos.raw][cur_pos.col] == (player_id + 5) ?
+                    (options_pos = find_options_big(player_id, desk, cur_pos))
+                    :
+                    (options_pos = find_options(player_id, opponent_id, desk, cur_pos));
+
+                    is_selected = select_checker(player_id, &cur_pos, desk, &options_pos, &options_rect);
+
                     continue;
 
                 }
@@ -67,26 +77,39 @@ int game_start(int player_id, int desk[8][8], int status)
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        puts("trying to move");
-                        printf("n_c_p.raw = %d\nn_c_p.col = %d\noptions[%d].raw = %d\noptions[%d].col  %d\n", new_cur_pos.raw, new_cur_pos.col, i, options_pos[i].raw, i, options_pos[i].raw);
+
                         if (new_cur_pos.raw == options_pos[i].raw
                         && new_cur_pos.col == options_pos[i].col)
                         {
 
                             int needed_id = handle_selected_option(options_rect, event.button.x, event.button.y);
+
+
                             cur_pos = make_move(desk, cur_pos, options_pos[needed_id]);
+
+                            draw_deads(opponent_id, 12 - num_of_checkers_alive);
 
                             if (options_pos != NULL)
                                 free(options_pos);
                             if (options_rect != NULL)
                                 free(options_rect);
 
-
-
                             draw_desk_checkers(player_id, desk, status);
 
-                            puts("move made");
-                            return status == 1? 2 : 1;
+                            options_pos = find_options_after(player_id, opponent_id, desk, cur_pos);
+
+                            for (int i = 0; i < 4; i++)
+                                printf("options[%d]:[%d; %d]\n", i, options_pos[i].raw,options_pos[i].col);
+
+
+                            if (count_options(options_pos) > 0)
+                            {
+                                select_checker(player_id, &cur_pos, desk, &options_pos, &options_rect);
+                                continue;
+                            }
+
+                            return opponent_id;
+
                         }
                     }
                 }
@@ -100,17 +123,10 @@ int game_start(int player_id, int desk[8][8], int status)
 
 }
 
-int select_checker(int player_id, pos_t *cur_pos, pos_t *new_cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect)
+int select_checker(int player_id, pos_t *cur_pos, int desk[8][8], pos_t **options_pos, SDL_Rect** options_rect)
 {
-    cur_pos->raw = new_cur_pos->raw;
-    cur_pos->col = new_cur_pos->col;
 
     draw_selected(pos_t_to_rect(*cur_pos));
-
-    desk[new_cur_pos->raw][new_cur_pos->col] == (player_id + 5) ?
-    (*options_pos = find_options_big(player_id, desk, *cur_pos))
-    :
-    (*options_pos = find_options(player_id, desk, *cur_pos));
 
     *options_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect) * 4);
     for (int k = 0; k < 4; k++)
@@ -140,8 +156,8 @@ pos_t make_move(int desk[8][8], pos_t cur_pos, pos_t new)
     if (abs(cur_pos.col - new.col) > 1)
         desk[(cur_pos.raw + new.raw) / 2][(cur_pos.col + new.col) / 2] = 0;
 
-    cur_pos.col = new.col;
-    cur_pos.raw = new.raw;
+
+    return new;
 }
 
 
@@ -201,14 +217,11 @@ void set_option(pos_t* where_to, int x, int y)
     where_to -> raw = y;
 }
 
-pos_t* find_options(int player_id, int desk[8][8], pos_t cur_pos)
+pos_t* find_options(int player_id, int opponent_id, int desk[8][8], pos_t cur_pos)
 {
 
     pos_t* options = (pos_t*) malloc(sizeof(pos_t) * 4);
 
-    int opponent_id;
-
-    opponent_id = player_id == 1 ? 2 : 1;
 
     int nx, ny;
 
@@ -336,4 +349,101 @@ pos_t* find_options_big(int player_id, int desk[8][8], pos_t cur_pos)
 {
     pos_t* a = NULL;
     return a;
+}
+
+pos_t* find_options_after(int player_id, int opponent_id, int desk[8][8], pos_t cur_pos)
+{
+    pos_t* options = (pos_t*) malloc(sizeof(pos_t) * 4);
+
+    int nx, ny;
+
+    //up+left
+    ny = cur_pos.raw - 1;
+    nx = cur_pos.col - 1;
+
+    if (nx > -1 && ny > -1
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+        && (nx - 1) > -1
+        && (ny - 1) > -1
+        && desk[ny - 1][nx - 1] == 0)
+    {
+        set_option(&options[0], nx - 1, ny - 1);
+    }
+    else
+    {
+        set_option(&options[0], -1, -1);
+
+    }
+
+
+    //up+right
+    ny = cur_pos.raw - 1;
+    nx = cur_pos.col + 1;
+
+    if (nx < 8 && ny > -1
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+        && (nx + 1) < 8
+        && (ny - 1) > -1
+        && desk[ny - 1][nx + 1] == 0)
+    {
+        set_option(&options[1], nx + 1, ny - 1);
+    }
+    else
+    {
+        set_option(&options[1], -1, -1);
+
+    }
+
+
+    //down+left
+    ny = cur_pos.raw + 1;
+    nx = cur_pos.col - 1;
+
+    if (nx > -1 && ny < 8
+        && (desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+        && (nx - 1) > -1
+        && (ny + 1) < 8
+        && desk[ny + 1][nx - 1] == 0)
+    {
+        set_option(&options[2], nx - 1, ny + 1);
+    }
+    else
+    {
+        set_option(&options[2], -1, -1);
+
+    }
+
+
+    //down + right
+    ny = cur_pos.raw + 1;
+    nx = cur_pos.col + 1;
+
+    if (nx < 8 && ny < 8
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 5)
+        && (nx + 1) < 8
+        && (ny + 1) < 8
+        && desk[ny + 1][nx + 1] == 0)
+    {
+        set_option(&options[3], nx + 1, ny + 1);
+    }
+    else
+    {
+        set_option(&options[3], -1, -1);
+
+    }
+
+
+    return options;
+}
+
+int count_checkers_on_desk(int player_id, int desk[8][8])
+{
+    int num = 0;
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++)
+            if (desk[i][j] == player_id
+                || desk[i][j] == player_id + 5)
+                num++;
+
+    return num;
 }

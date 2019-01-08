@@ -156,6 +156,68 @@ int draw_destroy()
     return 0;
 }
 
+void draw_deads(int player_id, int num)
+{
+    SDL_Rect* selected;
+    SDL_Rect draw_at;
+
+    selected = player_id == 1 ? &small_checker_white : &small_checker_black;
+
+    draw_at.x = player_id == 1 ? 10 : 760;
+    draw_at.y = 60;
+    draw_at.w = 30;
+    draw_at.h = 30;
+
+    for (int i = 0; i < num; i++)
+    {
+        SDL_BlitSurface(checkers_surface, selected, main_surface, &draw_at);
+        draw_at.x += 50;
+        if ((draw_at.x > 110 && player_id == 1) || (draw_at.x > 860 && player_id == 2))
+        {
+            draw_at.x =  player_id == 1 ? 10 : 760;
+            draw_at.y += 50;
+        }
+    }
+    SDL_UpdateWindowSurface(main_window);
+}
+
+void draw_result(int status)
+{
+    char* result = malloc(200);
+    result[0] = '\0';
+
+    switch (status)
+    {
+
+        case(6):
+            strcat(result, "Whites won!");
+            break;
+
+        case(7):
+            strcat(result, "Blacks won!");
+            break;
+
+        case(8):
+            strcat(result, "Whites won coz blacks left");
+            break;
+
+        case(9):
+            strcat(result,"Whites won coz blacks left");
+            break;
+
+        default:
+            strcat(result, "Wrong end_status received");
+
+    }
+
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                            "Congratulations!",
+                            result,
+                            NULL);
+
+    free(result);
+}
+
 
 int init_create_mains(const char* title)
 {
@@ -176,6 +238,8 @@ int init_create_mains(const char* title)
 
     return 0;
 }
+
+
 
 int init_game_elements()
 {

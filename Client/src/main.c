@@ -10,7 +10,6 @@
 //TODO: переделать архитектуру
 //      Добавить возможность остановить игру
 
-//TODO: убрать баг с выбором клик выше
 //TODO: убрать ход назад
 //TODO: добавить отрисовку по бокам
 //TODO: сделать кнопку выхода
@@ -24,7 +23,7 @@ const int PORT = 2510;
 int main(int argc, char* args[])
 {
 
-    int status = -1, socket, player_id, end_status;
+    int status = -1, socket, player_id, opponents_id;
     char* message;
     int desk[8][8];
 
@@ -41,6 +40,7 @@ int main(int argc, char* args[])
 
     //initial messages
     player_id = receive_player_id(socket);
+    opponents_id = player_id == 1? 2 : 1;
     message = receive_message(socket);
     status = parse_message(message, &desk[0][0]);
 
@@ -52,13 +52,13 @@ int main(int argc, char* args[])
     {
 
 
-
         if (status == player_id)
         {
 
             draw_desk_checkers(player_id, desk, status);
+            draw_deads(player_id, 12 - count_checkers_on_desk(player_id, desk));
 
-            if ((end_status = game_start(player_id, desk, status)) > 2)
+            if (game_start(player_id, opponents_id, desk, status) > 2)
                 break;
             status == 1 ? status++ : status--;
 
@@ -83,30 +83,7 @@ int main(int argc, char* args[])
     }
 
     //отрисовка окна в зависимости от статуса
-
-    switch (end_status)
-    {
-
-        case(6):
-            puts("Whites won!");
-            break;
-
-        case(7):
-            puts("Blacks won!");
-            break;
-
-        case(8):
-            puts("Whites won coz blacks left");
-            break;
-
-        case(9):
-            puts("Whites won coz blacks left");
-            break;
-
-        default:
-            puts("Wrong end_status received");
-
-    }
+    draw_result(status);
 
     free(message);
     draw_destroy();
