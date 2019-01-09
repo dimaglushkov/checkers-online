@@ -13,7 +13,7 @@
 int create_connection(const char* ADDRESS, int PORT)
 {
     int sock;
-    struct sockaddr_in address, server_address;
+    struct sockaddr_in server_address;
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -71,10 +71,7 @@ char* receive_message(int socket)
 {
     char* message;
     message = (char*) malloc(STRING_SIZE * sizeof(char));
-    read(socket, message, STRING_SIZE);
-    puts("[=]Received message:");
-    printf("[=]%s\n", message);
-    puts("[==========]");
+    recv(socket, message, STRING_SIZE, 0);
     return message;
 }
 
@@ -83,9 +80,6 @@ int receive_player_id(int socket)
     char* message;
     message = (char*) malloc(2 * sizeof(char));
     recv(socket, message, 2, 0);
-    puts("[=]Received id message:");
-    printf("[=]%s\n", message);
-    puts("[==========]");
     int res = message[0] - '0';
     free(message);
     return res;

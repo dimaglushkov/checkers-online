@@ -196,6 +196,15 @@ char* update(char* req)
 
     int checkers[2];
     int index = (char)(req[0] - '0');
+    char* response;
+    response = (char*) malloc (sizeof(char) * STRING_SIZE);
+
+    if (req[0] > '2')
+    {
+        response[0] = req[0];
+        response[1] = '\0';
+        return response;
+    }
 
     char opponent = (char) (index == 1 ? '2' : '1');
 
@@ -209,7 +218,7 @@ char* update(char* req)
     {
         if (req[i] == opponent)
             checkers[0]++;
-        else if (req[i] == opponent + 5)
+        else if (req[i] == opponent + 3)
             checkers[1]++;
     }
 
@@ -223,17 +232,16 @@ char* update(char* req)
     printf("[!] big checkers: %d\n", checkers[1]);
     printf("[!] new index is %d\n", index);
 
-    char* answer;
-    answer = (char*) malloc (sizeof(char) * STRING_SIZE);
-    answer[0] = (char) (index + '0');
-    answer[1] = ' ';
-    answer[2] = '\0';
 
-    strcpy(&answer[2], &req[2]);
+    response[0] = (char) (index + '0');
+    response[1] = ' ';
+    response[2] = '\0';
 
-    printf("[+]Server answer: %s\n", answer);
+    strcpy(&response[2], &req[2]);
 
-    return answer;
+    printf("[+]Server response: %s\n", response);
+
+    return response;
 }
 
 char* init(int index)
@@ -267,4 +275,5 @@ int is_ended(char* message)
 {
     return message[0] > 2 ? 1 : 0;
 }
+
 

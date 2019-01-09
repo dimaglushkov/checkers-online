@@ -5,11 +5,6 @@
 #include "network.h"
 
 
-
-//TODO: сделать кнопку выхода
-//TODO: добавить возможность стать дамкой
-
-
 const char* ADDRESS = "127.0.0.1";
 const int PORT = 2510;
 
@@ -38,8 +33,8 @@ int main(int argc, char* args[])
     message = receive_message(socket);
     status = parse_message(message, &desk[0][0]);
 
-    draw_gameplay_base(player_id, status);
-    draw_desk_checkers(player_id, desk, status);
+    draw_gameplay_base(player_id);
+    draw_desk_checkers(desk, status);
 
 
     while (1)
@@ -49,12 +44,19 @@ int main(int argc, char* args[])
         if (status == player_id)
         {
 
-            draw_desk_checkers(player_id, desk, status);
+            draw_desk_checkers(desk, status);
             draw_deads(player_id, 12 - count_checkers_on_desk(player_id, desk));
 
             status = game_start(player_id, opponents_id, desk, status);
 
-            draw_desk_checkers(player_id, desk, status);
+            if(status > 2)
+            {
+                message = create_message(status, desk);
+                send_message(socket, message);
+                break;
+            }
+
+            draw_desk_checkers(desk, status);
 
             if (message != NULL)
                 free(message);

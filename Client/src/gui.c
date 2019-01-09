@@ -2,7 +2,7 @@
 
 
 const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750;
-const char* GAME_TITLE = "Checkers-online(ver. 0.1)";
+const char* GAME_TITLE = "Checkers-online";
 
 SDL_Window*  main_window = NULL;
 SDL_Surface* main_surface = NULL;
@@ -47,7 +47,7 @@ int draw_intro (int connection_status)
 
 }
 
-int draw_gameplay_base(int player_id, int status)
+int draw_gameplay_base(int player_id)
 {
     SDL_Surface* base_surface;
 
@@ -75,9 +75,8 @@ int draw_gameplay_base(int player_id, int status)
     return 0;
 }
 
-int draw_desk_checkers(int player_id, int desk[8][8], int status)
+int draw_desk_checkers(int desk[8][8], int status)
 {
-    //TODO: draw small-checkers on sides
 
     SDL_BlitSurface(desk_surface, NULL, main_surface, &desk_rect);
     if (status == 1)
@@ -132,9 +131,9 @@ int draw_selected(SDL_Rect draw_at)
     return 0;
 }
 
-int draw_options(SDL_Rect* opt_rect)
+int draw_options(int times, SDL_Rect* opt_rect)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < times; i++)
     {
         if (opt_rect[i].x == 0)
             continue;
@@ -190,19 +189,19 @@ void draw_result(int status)
     {
 
         case(6):
-            strcat(result, "Whites won!");
+            strcat(result, "Белые победили!");
             break;
 
         case(7):
-            strcat(result, "Blacks won!");
+            strcat(result, "Черные победили!");
             break;
 
         case(8):
-            strcat(result, "Whites won coz blacks left");
+            strcat(result, "Черные победили!\n(Белые вышли)");
             break;
 
         case(9):
-            strcat(result,"Whites won coz blacks left");
+            strcat(result,"Белые победили!\n(Черные вышли)");
             break;
 
         default:
@@ -211,7 +210,7 @@ void draw_result(int status)
     }
 
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
-                            "Congratulations!",
+                            "Поздравляем!",
                             result,
                             NULL);
 
@@ -274,4 +273,12 @@ int init_game_elements()
     desk_rect.x = 150;
     desk_rect.y = 50;
     desk_rect.w = desk_rect.h = 600;
+}
+
+void draw_rules()
+{
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                             "Правила",
+                             "Ну это шашки\nя хз че тут писать\nыыыыыыыыыыы",
+                             NULL);
 }
