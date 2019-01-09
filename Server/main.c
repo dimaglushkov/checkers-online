@@ -1,46 +1,41 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/time.h>
+#include <errno.h>
 
 #define PORT 2510
 #define STRING_SIZE 132
 
-//TODO: make this thing looks nice and AT LEAST readable
-
-//
-//0 2 0 2 0 2 0 2
-//2 0 2 0 2 0 2 0
-//0 2 0 2 0 2 0 2
-//0 0 0 0 0 0 0 0
-//0 0 0 0 0 0 0 0
-//0 1 0 1 0 1 0 1
-//1 0 1 0 1 0 1 0
-//0 1 0 1 0 1 0 1
-//
-
-
 char* update (char* );
 char* init (int index);
-int is_ended(char* message);
+int is_ended(const char* message);
 
 int main(int argc , char *argv[])
 {
-    int opt = 1;
-    int master_socket , addrlen , new_socket , client_socket[30] ,
-            max_clients = 2 , activity, i , valread , sd;
-    int max_sd;
+    int opt = 1,
+        master_socket,
+        addrlen,
+        new_socket,
+        client_socket[30],
+        max_clients = 2,
+        activity,
+        i,
+        valread,
+        sd,
+        max_sd;
+
     struct sockaddr_in address;
 
     char buffer[STRING_SIZE];
     fd_set readfds;
 
+    puts("[+] Starting server...");
 
     for (i = 0; i < max_clients; i++)
     {
@@ -49,13 +44,15 @@ int main(int argc , char *argv[])
 
     if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0)
     {
-        perror("socket failed");
+        perror("master socket");
+        puts("[-] Error: can't create master socket.");
         exit(EXIT_FAILURE);
     }
 
     if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0 )
     {
-        perror("setsockopt failed");
+        perror("setsockopt");
+        puts("[-] Error: setcockopt() failed.");
         exit(EXIT_FAILURE);
     }
 
@@ -65,19 +62,22 @@ int main(int argc , char *argv[])
 
     if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0)
     {
-        perror("bind failed");
+        perror("bind");
+        puts("[-] Error: bind() failed.");
         exit(EXIT_FAILURE);
     }
-    printf("[+]Listener on port %d \n", PORT);
+
+    printf("[+] Listener on port %d. \n", PORT);
 
     if (listen(master_socket, 2) < 0)
     {
         perror("listen");
+        puts("[-] Error: listen() failed.");
         exit(EXIT_FAILURE);
     }
 
     addrlen = sizeof(address);
-    puts("[+]Waiting for connections ...");
+    puts("[+] Waiting for connections...");
 
     while(1)
     {
@@ -101,7 +101,7 @@ int main(int argc , char *argv[])
 
         if ((activity < 0) && (errno!=EINTR))
         {
-            printf("Error: error while select().");
+            puts("[-] Error: select() failed.");
         }
 
         if (FD_ISSET(master_socket, &readfds))
@@ -109,11 +109,13 @@ int main(int argc , char *argv[])
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
             {
                 perror("accept");
+                puts("[-] Error: accept() failed.");
                 exit(EXIT_FAILURE);
             }
 
-            printf("[+]New connection - ip: %s port: %d  \n", inet_ntoa(address.sin_addr), ntohs(address.sin_port));
-
+            printf("[+] New connection - ip: %s port: %d.\n",
+                    inet_ntoa(address.sin_addr),
+                    ntohs(address.sin_port));
 
 
             for (i = 0; i < max_clients; i++)
@@ -122,7 +124,7 @@ int main(int argc , char *argv[])
                 {
                     //when somebody connected
                     client_socket[i] = new_socket;
-                    printf("[+]Adding to list of sockets as %d\n" , i);
+                    printf("[+] Adding to list of sockets as %d\n", i);
 
                     //both players connected
                     if (i == 1)
@@ -130,6 +132,7 @@ int main(int argc , char *argv[])
                         //sending id
                         send(client_socket[0], "1", 2, 0);
                         send(client_socket[1], "2", 2, 0);
+
                         //sending initial messages to start game
                         char * initial_message = init(1);
                         send(client_socket[0], initial_message, STRING_SIZE, 0);
@@ -145,14 +148,16 @@ int main(int argc , char *argv[])
         {
             sd = client_socket[i];
 
-            if (FD_ISSET( sd , &readfds))
+            if (FD_ISSET(sd, &readfds))
             {
-                if ((valread =  (int) read( sd , buffer, 1024)) == 0)
+                if ((valread =  (int) read(sd, buffer, 1024)) == 0)
                 {
-                    getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
-                    printf("[-]Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+                    printf("[-] Host disconnected - ip: %s port: %d.\n",
+                            inet_ntoa(address.sin_addr),
+                            ntohs(address.sin_port));
 
-                    close( sd );
+                    close(sd);
                     client_socket[i] = 0;
                 }
 
@@ -171,14 +176,13 @@ int main(int argc , char *argv[])
                     }
                     buffer[valread] = '\0';
                     char* response = update(buffer);
-                    send(sd , response , strlen(buffer) , 0 );
+                    send(sd, response, strlen(buffer), 0);
 
-                    //send message about games end
                     if (is_ended(response))
                     {
                         selected == 0 ? selected++ : selected--;
                         sd = client_socket[selected];
-                        send(sd , response , strlen(buffer) , 0 );
+                        send(sd, response, strlen(buffer), 0);
                     }
 
                     free(response);
@@ -203,13 +207,13 @@ char* update(char* req)
     {
         response[0] = req[0];
         response[1] = '\0';
+        printf("[!] Server sending response: %s\n", response);
         return response;
     }
 
     char opponent = (char) (index == 1 ? '2' : '1');
 
-        printf("[=]Server received message:%s\n", req);
-        printf("[!] received index is %d\n", index);
+    printf("[!] Server received message:%s\n", req);
 
     checkers[0] = 0;
     checkers[1] = 0;
@@ -227,20 +231,13 @@ char* update(char* req)
     else
         index = opponent - '0';
 
-
-    printf("[!] checkers: %d\n", checkers[0]);
-    printf("[!] big checkers: %d\n", checkers[1]);
-    printf("[!] new index is %d\n", index);
-
-
     response[0] = (char) (index + '0');
     response[1] = ' ';
     response[2] = '\0';
 
     strcpy(&response[2], &req[2]);
 
-    printf("[+]Server response: %s\n", response);
-
+    printf("[!] Server sending response: %s\n", response);
     return response;
 }
 
@@ -264,14 +261,14 @@ char* init(int index)
     }
     else
     {
-        puts("Error while opening file");
+        puts("[+] Error: can't open desk file.");
     }
 
     free(buffer);
     return desk_string;
 }
 
-int is_ended(char* message)
+int is_ended(const char* message)
 {
     return message[0] > 2 ? 1 : 0;
 }
