@@ -6,12 +6,6 @@
 
 
 
-
-//TODO: переделать архитектуру
-//      Добавить возможность остановить игру
-
-//TODO: убрать ход назад
-//TODO: добавить отрисовку по бокам
 //TODO: сделать кнопку выхода
 //TODO: добавить возможность стать дамкой
 
@@ -24,7 +18,7 @@ int main(int argc, char* args[])
 {
 
     int status = -1, socket, player_id, opponents_id;
-    char* message;
+    char* message = NULL;
     int desk[8][8];
 
     draw_intro(status);
@@ -58,12 +52,9 @@ int main(int argc, char* args[])
             draw_desk_checkers(player_id, desk, status);
             draw_deads(player_id, 12 - count_checkers_on_desk(player_id, desk));
 
-            if (game_start(player_id, opponents_id, desk, status) > 2)
-                break;
-            status == 1 ? status++ : status--;
+            status = game_start(player_id, opponents_id, desk, status);
 
             draw_desk_checkers(player_id, desk, status);
-
 
             if (message != NULL)
                 free(message);
@@ -82,7 +73,6 @@ int main(int argc, char* args[])
 
     }
 
-    //отрисовка окна в зависимости от статуса
     draw_result(status);
 
     free(message);
