@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/allacee/CLionProjects/checkers-online/Server/src/packer.c
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+packer.h
+/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
+
+/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
+
