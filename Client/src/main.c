@@ -70,7 +70,10 @@ int main(int argc, char* args[])
             message = receive_message(socket);
             status = parse_message(message, &desk[0][0]);
             if (status > 2)
+            {
+                draw_desk_checkers(desk, player_id);
                 break;
+            }
         }
 
     }

@@ -137,6 +137,7 @@ int game_start(int player_id, int opponent_id, int desk[8][8], int status)
                             cur_pos = make_move(desk, cur_pos, options_pos[i]);
                             check_growing(player_id, cur_pos, desk);
                             draw_desk_checkers(desk, status);
+                            draw_deads(opponent_id, 12 - count_checkers_on_desk(opponent_id, desk));
 
                             free(options_pos);
                             free(options_rect);
