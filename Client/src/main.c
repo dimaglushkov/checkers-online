@@ -39,11 +39,8 @@ int main(int argc, char* args[])
 
     while (1)
     {
-
-
         if (status == player_id)
         {
-
             draw_desk_checkers(desk, status);
             draw_deads(player_id, 12 - count_checkers_on_desk(player_id, desk));
 
@@ -51,6 +48,7 @@ int main(int argc, char* args[])
 
             if(status > 2)
             {
+                free(message);
                 message = create_message(status, desk);
                 send_message(socket, message);
                 break;
@@ -58,15 +56,14 @@ int main(int argc, char* args[])
 
             draw_desk_checkers(desk, status);
 
-            if (message != NULL)
-                free(message);
+            free(message);
             message = create_message(player_id, desk);
             send_message(socket, message);
         }
         else
         {
-            if (message != NULL)
-                free(message);
+
+            free(message);
             message = receive_message(socket);
             status = parse_message(message, &desk[0][0]);
             if (status > 2)
