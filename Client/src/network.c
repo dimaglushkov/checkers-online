@@ -15,9 +15,11 @@ int create_connection(const char* ADDRESS, int PORT)
     int sock;
     struct sockaddr_in server_address;
 
+
+
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        puts("[-]Error: Can't create socket.");
+        perror("Error while creating socket");
         return -1;
     }
 
@@ -28,13 +30,14 @@ int create_connection(const char* ADDRESS, int PORT)
 
     if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
     {
-        puts("[-]Error: Invalid address.");
+        perror("Error Invalid address");
         return -1;
     }
 
     if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
     {
-        puts("[-]Error: Connection failed.");
+        printf ("Connecting to %s:%d", ADDRESS, PORT);
+        perror("Error while connecting");
         return -1;
     }
 

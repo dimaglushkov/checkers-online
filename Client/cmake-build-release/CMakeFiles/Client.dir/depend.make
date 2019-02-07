@@ -12,6 +12,9 @@ CMakeFiles/Client.dir/src/main.c.o: ../src/gameplay.h
 CMakeFiles/Client.dir/src/main.c.o: ../src/gui.h
 CMakeFiles/Client.dir/src/main.c.o: ../src/main.c
 CMakeFiles/Client.dir/src/main.c.o: ../src/network.h
+CMakeFiles/Client.dir/src/main.c.o: ../src/packer.h
 
 CMakeFiles/Client.dir/src/network.c.o: ../src/network.c
+
+CMakeFiles/Client.dir/src/packer.c.o: ../src/packer.c
 

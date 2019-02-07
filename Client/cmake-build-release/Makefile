@@ -231,6 +231,33 @@ src/network.c.s:
 	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/network.c.s
 .PHONY : src/network.c.s
 
+src/packer.o: src/packer.c.o
+
+.PHONY : src/packer.o
+
+# target to build an object file
+src/packer.c.o:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/packer.c.o
+.PHONY : src/packer.c.o
+
+src/packer.i: src/packer.c.i
+
+.PHONY : src/packer.i
+
+# target to preprocess a source file
+src/packer.c.i:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/packer.c.i
+.PHONY : src/packer.c.i
+
+src/packer.s: src/packer.c.s
+
+.PHONY : src/packer.s
+
+# target to generate assembly for a file
+src/packer.c.s:
+	$(MAKE) -f CMakeFiles/Client.dir/build.make CMakeFiles/Client.dir/src/packer.c.s
+.PHONY : src/packer.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -252,6 +279,9 @@ help:
 	@echo "... src/network.o"
 	@echo "... src/network.i"
 	@echo "... src/network.s"
+	@echo "... src/packer.o"
+	@echo "... src/packer.i"
+	@echo "... src/packer.s"
 .PHONY : help
 
 

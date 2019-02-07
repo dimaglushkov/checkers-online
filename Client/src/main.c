@@ -3,29 +3,37 @@
 #include "gui.h"
 #include "gameplay.h"
 #include "network.h"
+#include "packer.h"
+
+char* get_host_addr(int argc, char *argv[]);
+int   get_host_port(int argc, char *argv[]);
+
+const int SDL_DELAY_ON_LOAD = 500,
+          CONNECTING_PIC_ID = 0,
+          WAITING_PIC_ID = 1;
 
 
-const char* ADDRESS = "127.0.0.1";
-const int PORT = 2510;
-
-
-int main(int argc, char* args[])
+int main(int argc, char* argv[])
 {
 
-    int status = -1, socket, player_id, opponents_id;
+    int status, socket, player_id, opponents_id;
     char* message = NULL;
-    int desk[8][8];
+    char* host_addr;
+    int desk[8][8], host_port;
 
-    draw_intro(status);
+    host_addr = get_host_addr(argc, argv);
+    host_port = get_host_port(argc, argv);
+
+    draw_intro(CONNECTING_PIC_ID);
 
     do
     {
-        SDL_Delay(500);
-        socket = create_connection(ADDRESS, PORT);
+        SDL_Delay(SDL_DELAY_ON_LOAD);
+        socket = create_connection(host_addr, host_port);
     }
     while(socket < 0);
 
-    draw_intro(0);
+    draw_intro(WAITING_PIC_ID);
 
     //initial messages
     player_id = receive_player_id(socket);
@@ -83,3 +91,22 @@ int main(int argc, char* args[])
     return 0;
 }
 
+char* get_host_addr(int argc, char *argv[])
+{
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-host") == 0 && argv[i + 1])
+            return argv[i + 1];
+    }
+    return "127.0.0.1";
+}
+
+int get_host_port(int argc, char *argv[])
+{
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-port") == 0 && argv[i + 1])
+            return atoi(argv[i + 1]);
+    }
+    return 2510;
+}

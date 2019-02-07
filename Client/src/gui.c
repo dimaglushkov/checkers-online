@@ -17,7 +17,7 @@ SDL_Rect small_checker_white, small_checker_black,
 int init_create_mains(const char* title);
 int init_game_elements();
 
-int draw_intro (int connection_status)
+int draw_picture (int picture_id)
 {
 
     if (main_surface == NULL)
@@ -28,12 +28,12 @@ int draw_intro (int connection_status)
 
     SDL_Surface* loading_surface = NULL;
 
-    switch (connection_status)
+    switch (picture_id)
     {
-        case -1:
+        case 0:
             loading_surface = SDL_LoadBMP("../img/draw_init_connecting.bmp");
             break;
-        case 0:
+        case 1:
             loading_surface = SDL_LoadBMP("../img/draw_waiting.bmp");
             break;
         default:break;

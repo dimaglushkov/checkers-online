@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/home/allacee/CLionProjects/checkers-online/Client/src/gui.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/Client.dir/src/gui.c.o"
   "/home/allacee/CLionProjects/checkers-online/Client/src/main.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/Client.dir/src/main.c.o"
   "/home/allacee/CLionProjects/checkers-online/Client/src/network.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/Client.dir/src/network.c.o"
+  "/home/allacee/CLionProjects/checkers-online/Client/src/packer.c" "/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/Client.dir/src/packer.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
