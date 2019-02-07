@@ -15,8 +15,6 @@ SDL2/SDL.h
 /home/allacee/CLionProjects/checkers-online/Client/src/main.c
 stdio.h
 -
-SDL2/SDL_timer.h
--
 gui.h
 /home/allacee/CLionProjects/checkers-online/Client/src/gui.h
 gameplay.h

@@ -1,59 +1,107 @@
 #include "gui.h"
 
+const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
+        SMALL_WHITE_ID = 0,
+        SMALL_BLACK_ID = 1,
+        WHITE_ID = 2,
+        BLACK_ID = 3,
+        KING_WHITE_ID = 4,
+        KING_BLACK_ID = 5,
+        OPTION_ID = 6,
+        SELECTED_ID = 7,
+        CURRENT_TURN_ID = 8,
+        DESK_ID = 9;
 
-const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750;
+
 const char* GAME_TITLE = "Checkers-online";
 
-SDL_Window*  main_window = NULL;
-SDL_Surface* main_surface = NULL;
-SDL_Surface* checkers_surface = NULL;
-SDL_Surface* desk_surface = NULL;
-SDL_Rect small_checker_white, small_checker_black,
-         checker_black, checker_white,
-         big_checker_black, big_checker_white,
-         option, selected,
-         whos_turn, desk_rect;
+SDL_Rect create_rect(int x, int y, int w, int h);
 
-int init_create_mains(const char* title);
-int init_game_elements();
 
-int draw_picture (int picture_id)
+int create_window_with_surface(SDL_Window** window, SDL_Surface** surface)
+{
+    *window = SDL_CreateWindow(GAME_TITLE,
+                                   SDL_WINDOWPOS_UNDEFINED,
+                                   SDL_WINDOWPOS_UNDEFINED,
+                                   SCREEN_WIDTH,
+                                   SCREEN_HEIGHT,
+                                   SDL_WINDOW_SHOWN);
+    if (!*window)
+        return 1;
+
+    *surface = SDL_GetWindowSurface(*window);
+    if (!*surface)
+        return 1;
+
+    return 0;
+}
+
+SDL_Surface* create_surface_from_bmp(const char* path)
+{
+    SDL_Surface* surface;
+    surface = SDL_LoadBMP(path);
+    return surface;
+}
+
+int draw_image (SDL_Window** main_window, SDL_Surface** main_surface, const char* path)
 {
 
-    if (main_surface == NULL)
-    {
-        SDL_Init(SDL_INIT_VIDEO);
-        init_create_mains(GAME_TITLE);
-    }
+    if (main_surface == NULL || main_window == NULL)
+        return  1;
 
-    SDL_Surface* loading_surface = NULL;
+    SDL_Surface* loading_surface = SDL_LoadBMP(path);
 
-    switch (picture_id)
-    {
-        case 0:
-            loading_surface = SDL_LoadBMP("../img/draw_init_connecting.bmp");
-            break;
-        case 1:
-            loading_surface = SDL_LoadBMP("../img/draw_waiting.bmp");
-            break;
-        default:break;
-    }
-
-    SDL_BlitSurface(loading_surface, NULL, main_surface, NULL);
-    SDL_UpdateWindowSurface(main_window);
+    SDL_BlitSurface(loading_surface, NULL, *main_surface, NULL);
+    SDL_UpdateWindowSurface(*main_window);
 
     SDL_FreeSurface(loading_surface);
     return 0;
 
 }
 
-int draw_gameplay_base(int player_id)
+SDL_Rect create_rect(int x, int y, int w, int h)
+{
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
+    return rect;
+}
+
+void create_texture_rects(SDL_Rect* texture_rects)
+{
+    texture_rects[SMALL_WHITE_ID] = create_rect(30, 450, 30, 30);
+    texture_rects[SMALL_BLACK_ID] = create_rect(0, 450, 30, 30);
+    texture_rects[WHITE_ID] = create_rect(0, 0, 75, 75);
+    texture_rects[BLACK_ID] = create_rect(0, 75, 75, 75);
+    texture_rects[KING_WHITE_ID] = create_rect(0, 150, 75, 75);
+    texture_rects[KING_BLACK_ID] = create_rect(0, 225, 75, 75);
+    texture_rects[OPTION_ID] = create_rect(0, 375, 75, 75);
+    texture_rects[SELECTED_ID] = create_rect(0, 300, 75, 75);
+    texture_rects[CURRENT_TURN_ID] = create_rect(380, 695, 1, 1);
+    texture_rects[DESK_ID] = create_rect(150, 50, 600, 600);
+}
+
+
+void draw_rules()
+{
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                             "Rules",
+                             "Something",
+                             NULL);
+}
+
+int draw_game_background(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Rect* texture_rects,
+        int player_id)
 {
     SDL_Surface* base_surface;
 
-    init_game_elements();
-
-    base_surface = SDL_LoadBMP("../img/draw_gameplay_base.bmp");
+    base_surface = SDL_LoadBMP("../img/background.bmp");
     if (!base_surface)
         return -1;
 
@@ -64,9 +112,9 @@ int draw_gameplay_base(int player_id)
     status_bar.w = status_bar.h = 1;
 
     if (player_id == 1)
-        SDL_BlitSurface(checkers_surface, &small_checker_white, base_surface, &status_bar);
+        SDL_BlitSurface(checkers_surface, &texture_rects[SMALL_WHITE_ID], base_surface, &status_bar);
     else
-        SDL_BlitSurface(checkers_surface, &small_checker_black, base_surface, &status_bar);
+        SDL_BlitSurface(checkers_surface, &texture_rects[SMALL_BLACK_ID], base_surface, &status_bar);
 
     SDL_BlitSurface(base_surface, NULL, main_surface, NULL);
     SDL_UpdateWindowSurface(main_window);
@@ -75,19 +123,35 @@ int draw_gameplay_base(int player_id)
     return 0;
 }
 
-int draw_desk_checkers(int desk[8][8], int status)
+int draw_checkers_on_desk(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* desk_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Rect* texture_rects,
+        int desk[8][8],
+        int status)
 {
 
-    SDL_BlitSurface(desk_surface, NULL, main_surface, &desk_rect);
+    const int x_on_surface_start = 150,
+              y_on_surface_start = 50,
+              step_on_surface = 75;
+    SDL_BlitSurface(desk_surface, NULL, main_surface, &texture_rects[DESK_ID]);
     if (status == 1)
-        SDL_BlitSurface(checkers_surface, &small_checker_white, main_surface, &whos_turn);
+        SDL_BlitSurface(checkers_surface,
+                &texture_rects[SMALL_WHITE_ID],
+                main_surface,
+                &texture_rects[CURRENT_TURN_ID]);
     else
-        SDL_BlitSurface(checkers_surface, &small_checker_black, main_surface, &whos_turn);
+        SDL_BlitSurface(checkers_surface,
+                &texture_rects[SMALL_BLACK_ID],
+                main_surface,
+                &texture_rects[CURRENT_TURN_ID]);
 
     SDL_Rect checker_on_desk;
-    checker_on_desk.x = 150;
-    checker_on_desk.y = 50;
-    checker_on_desk.w = checker_on_desk.h = 75;
+    checker_on_desk.x = x_on_surface_start;
+    checker_on_desk.y = y_on_surface_start;
+    checker_on_desk.w = checker_on_desk.h = step_on_surface;
 
     for (int i = 0; i < 8; i++)
     {
@@ -96,80 +160,114 @@ int draw_desk_checkers(int desk[8][8], int status)
             switch (desk[i][j])
             {
                 case (1):
-                    SDL_BlitSurface(checkers_surface, &checker_white, main_surface, &checker_on_desk);
+                    SDL_BlitSurface(checkers_surface,
+                            &texture_rects[WHITE_ID],
+                            main_surface,
+                            &checker_on_desk);
                     break;
 
                 case (2):
-                    SDL_BlitSurface(checkers_surface, &checker_black, main_surface, &checker_on_desk);
+                    SDL_BlitSurface(checkers_surface,
+                            &texture_rects[BLACK_ID],
+                            main_surface,
+                            &checker_on_desk);
                     break;
 
                 case (4):
-                    SDL_BlitSurface(checkers_surface, &big_checker_white, main_surface, &checker_on_desk);
+                    SDL_BlitSurface(checkers_surface,
+                            &texture_rects[KING_WHITE_ID],
+                            main_surface,
+                            &checker_on_desk);
                     break;
 
                 case (5):
-                    SDL_BlitSurface(checkers_surface, &big_checker_black, main_surface, &checker_on_desk);
+                    SDL_BlitSurface(checkers_surface,
+                            &texture_rects[KING_BLACK_ID],
+                            main_surface,
+                            &checker_on_desk);
                     break;
 
                 default:;
             }
 
-            checker_on_desk.x += 75;
+            checker_on_desk.x += step_on_surface;
         }
-        checker_on_desk.x = 150;
-        checker_on_desk.y += 75;
+        checker_on_desk.x = x_on_surface_start;
+        checker_on_desk.y += step_on_surface;
     }
 
     SDL_UpdateWindowSurface(main_window);
     return 0;
 }
 
-int draw_selected(SDL_Rect draw_at)
+void draw_selected(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Rect* texture_rects,
+        SDL_Rect draw_at)
 {
-    SDL_BlitSurface(checkers_surface, &selected, main_surface, &draw_at);
+    SDL_BlitSurface(checkers_surface, &texture_rects[SELECTED_ID], main_surface, &draw_at);
     SDL_UpdateWindowSurface(main_window);
-    return 0;
 }
 
-int draw_options(int times, SDL_Rect* opt_rect)
+int draw_options(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Rect* texture_rects,
+        int number_of_options,
+        SDL_Rect* opt_rect)
 {
-    for (int i = 0; i < times; i++)
+    for (int i = 0; i < number_of_options; i++)
     {
         if (opt_rect[i].x == 0)
             continue;
 
-        SDL_BlitSurface(checkers_surface, &option, main_surface, &opt_rect[i]);
+        SDL_BlitSurface(checkers_surface, &texture_rects[OPTION_ID], main_surface, &opt_rect[i]);
     }
     SDL_UpdateWindowSurface(main_window);
 
     return 0;
 }
 
-int draw_destroy()
+int free_window_surfaces(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Surface* desk_surface)
 {
-    SDL_FreeSurface( main_surface );
+    SDL_FreeSurface(main_surface);
     SDL_FreeSurface(checkers_surface);
     SDL_FreeSurface(desk_surface);
-    SDL_DestroyWindow( main_window);
+    SDL_DestroyWindow(main_window);
     SDL_Quit();
     return 0;
 }
 
-void draw_deads(int player_id, int num)
+
+
+void draw_deads(
+        SDL_Window* main_window,
+        SDL_Surface* main_surface,
+        SDL_Surface* checkers_surface,
+        SDL_Rect* texture_rects,
+        int player_id,
+        int number_of_deads)
 {
-    SDL_Rect* selected;
+    SDL_Rect* current_players_color;
     SDL_Rect draw_at;
 
-    selected = player_id == 1 ? &small_checker_white : &small_checker_black;
+    current_players_color = player_id == 1 ? &texture_rects[SMALL_WHITE_ID] : &texture_rects[SMALL_BLACK_ID];
 
     draw_at.x = player_id == 1 ? 10 : 760;
     draw_at.y = 60;
     draw_at.w = 30;
     draw_at.h = 30;
 
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < number_of_deads; i++)
     {
-        SDL_BlitSurface(checkers_surface, selected, main_surface, &draw_at);
+        SDL_BlitSurface(checkers_surface, current_players_color, main_surface, &draw_at);
         draw_at.x += 50;
         if ((draw_at.x > 110 && player_id == 1) || (draw_at.x > 860 && player_id == 2))
         {
@@ -184,101 +282,40 @@ void draw_result(int status)
 {
     char* result = malloc(200);
     result[0] = '\0';
+  /*const int WHITES_WON = 6,
+    BLACKS_WON = 7,
+    BLACKS_WON_WHITES_LEFT = 8,
+    WHITES_WON_BLACKS_LEFT = 9;*/
 
     switch (status)
     {
 
         case(6):
-            strcat(result, "Белые победили!");
+            strcat(result, "Whites won!");
             break;
 
         case(7):
-            strcat(result, "Черные победили!");
+            strcat(result, "Blacks won!");
             break;
 
         case(8):
-            strcat(result, "Черные победили!\n(Белые вышли)");
+            strcat(result, "Blacks won! (Whites left)");
             break;
 
         case(9):
-            strcat(result,"Белые победили!\n(Черные вышли)");
+            strcat(result, "Whites won! (Blacks left)");
             break;
 
         default:
-            strcat(result, "Wrong end_status received");
+            strcat(result, "Wrong end status received");
 
     }
 
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
-                            "Поздравляем!",
+                            "Congratulations!",
                             result,
                             NULL);
 
     free(result);
 }
 
-
-int init_create_mains(const char* title)
-{
-    main_window = SDL_CreateWindow(title,
-                                   SDL_WINDOWPOS_UNDEFINED,
-                                   SDL_WINDOWPOS_UNDEFINED,
-                                   SCREEN_WIDTH,
-                                   SCREEN_HEIGHT,
-                                   SDL_WINDOW_SHOWN);
-    if (!main_window)
-        return 1;
-
-    main_surface = SDL_GetWindowSurface(main_window);
-
-    if (!main_surface)
-        return 1;
-
-
-    return 0;
-}
-
-
-
-int init_game_elements()
-{
-
-    checkers_surface = SDL_LoadBMP("../img/draw_checkers.bmp");
-    desk_surface = SDL_LoadBMP("../img/draw_desk.bmp");
-
-    small_checker_black.x = 0;      small_checker_white.x = 30;
-    small_checker_black.y = 450;    small_checker_white.y = 450;
-    small_checker_black.h = 30;     small_checker_white.h = 30;
-    small_checker_black.w = 30;     small_checker_white.w = 30;
-
-    checker_black.x = 0;            checker_white.x = 0;
-    checker_black.y = 75;           checker_white.y = 0;
-    checker_black.w = 75;           checker_white.w = 75;
-    checker_black.h = 75;           checker_white.h = 75;
-
-    big_checker_black.x = 0;        big_checker_white.x = 0;
-    big_checker_black.y = 225;      big_checker_white.y = 150;
-    big_checker_black.w = 75;       big_checker_white.w = 75;
-    big_checker_black.h = 75;       big_checker_white.h = 75;
-
-    option.x = 0;             selected.x = 0;
-    option.y = 375;           selected.y = 300;
-    option.h = 75;            selected.h = 75;
-    option.w = 75;            selected.w = 75;
-
-    whos_turn.x = 380;
-    whos_turn.y = 695;
-    whos_turn.h = whos_turn.w = 1;
-
-    desk_rect.x = 150;
-    desk_rect.y = 50;
-    desk_rect.w = desk_rect.h = 600;
-}
-
-void draw_rules()
-{
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
-                             "Правила",
-                             "Ну это шашки\nя хз че тут писать\nыыыыыыыыыыы",
-                             NULL);
-}

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <SDL2/SDL_timer.h>
 #include "gui.h"
 #include "gameplay.h"
 #include "network.h"
@@ -8,51 +7,101 @@
 char* get_host_addr(int argc, char *argv[]);
 int   get_host_port(int argc, char *argv[]);
 
-const int SDL_DELAY_ON_LOAD = 500,
-          CONNECTING_PIC_ID = 0,
-          WAITING_PIC_ID = 1;
+const char *CONNECTING_BMP = "../img/connecting.bmp",
+           *WAITING_BMP = "../img/waiting.bmp",
+           *CHECKERS_BMP = "../img/checkers.bmp",
+           *DESK_BMP = "../img/desk.bmp";
+
+const int INITIAL_MESSAGE_SIZE = 2,
+          MESSAGE_SIZE = 132;
 
 
 int main(int argc, char* argv[])
 {
 
-    int status, socket, player_id, opponents_id;
-    char* message = NULL;
+    int socket, host_port;
     char* host_addr;
-    int desk[8][8], host_port;
+
+    int status, player_id, opponents_id;
+    char* message = NULL;
+    int desk[8][8];
+
+    SDL_Window*  main_window = NULL;
+    SDL_Surface* main_surface = NULL;
+    SDL_Surface* checkers_surface = NULL;
+    SDL_Surface* desk_surface = NULL;
+    SDL_Rect texture_rects[10];
 
     host_addr = get_host_addr(argc, argv);
     host_port = get_host_port(argc, argv);
 
-    draw_picture(CONNECTING_PIC_ID);
 
-    do
-    {
-        SDL_Delay(SDL_DELAY_ON_LOAD);
-        socket = create_connection(host_addr, host_port);
-    }
-    while(socket < 0);
+    create_window_with_surface(&main_window, &main_surface);
+    checkers_surface = create_surface_from_bmp(CHECKERS_BMP);
+    desk_surface = create_surface_from_bmp(DESK_BMP);
+    create_texture_rects(texture_rects);
 
-    draw_picture(WAITING_PIC_ID);
 
-    //initial messages
-    player_id = receive_player_id(socket);
-    opponents_id = player_id == 1? 2 : 1;
-    message = receive_message(socket);
+    draw_image(&main_window, &main_surface, CONNECTING_BMP);
+    socket = create_connection(host_addr, host_port);
+    draw_image(&main_window, &main_surface, WAITING_BMP);
+
+    message = receive_message(socket, INITIAL_MESSAGE_SIZE);
+    player_id = parse_initial_message(message);
+    //TODO: move this
+    free(message);
+    opponents_id = player_id == 1 ? 2 : 1;
+
+    message = receive_message(socket, MESSAGE_SIZE);
     status = parse_message(message, &desk[0][0]);
 
-    draw_gameplay_base(player_id);
-    draw_desk_checkers(desk, status);
+    draw_game_background(main_window,
+            main_surface,
+            checkers_surface,
+            texture_rects,
+            player_id);
+
+    draw_checkers_on_desk(main_window,
+            main_surface,
+            desk_surface,
+            checkers_surface,
+            texture_rects,
+            desk,
+            status);
 
 
     while (1)
     {
         if (status == player_id)
         {
-            draw_desk_checkers(desk, status);
-            draw_deads(player_id, 12 - count_checkers_on_desk(player_id, desk));
+            draw_checkers_on_desk(
+                    main_window,
+                    main_surface,
+                    desk_surface,
+                    checkers_surface,
+                    texture_rects,
+                    desk,
+                    status);
 
-            status = game_start(player_id, opponents_id, desk, status);
+            draw_deads(
+                    main_window,
+                    main_surface,
+                    checkers_surface,
+                    texture_rects,
+                    player_id,
+                    12 - count_checkers_on_desk(player_id, desk));
+
+            //here
+            status = game_start(
+                         main_window,
+                         main_surface,
+                         desk_surface,
+                         checkers_surface,
+                         texture_rects,
+                         player_id,
+                         opponents_id,
+                         desk,
+                         status);
 
             if(status > 2)
             {
@@ -62,7 +111,13 @@ int main(int argc, char* argv[])
                 break;
             }
 
-            draw_desk_checkers(desk, status);
+            draw_checkers_on_desk(main_window,
+                    main_surface,
+                    desk_surface,
+                    checkers_surface,
+                    texture_rects,
+                    desk,
+                    status);
 
             free(message);
             message = create_message(player_id, desk);
@@ -72,11 +127,18 @@ int main(int argc, char* argv[])
         {
 
             free(message);
-            message = receive_message(socket);
+
+            message = receive_message(socket, MESSAGE_SIZE);
             status = parse_message(message, &desk[0][0]);
             if (status > 2)
             {
-                draw_desk_checkers(desk, player_id);
+                draw_checkers_on_desk(main_window,
+                        main_surface,
+                        desk_surface,
+                        checkers_surface,
+                        texture_rects,
+                        desk,
+                        status);
                 break;
             }
         }
@@ -86,7 +148,11 @@ int main(int argc, char* argv[])
     draw_result(status);
 
     free(message);
-    draw_destroy();
+    free_window_surfaces(
+            main_window,
+            main_surface,
+            checkers_surface,
+            desk_surface);
 
     return 0;
 }

@@ -2,24 +2,25 @@
 #include <string.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-
-
 #include "packer.h"
 #include "network.h"
 
-#define PORT 2510
-#define MAX_CLIENTS 2
+uint16_t get_port(int argc, char *argv[]);
+
+const int MAX_CLIENTS = 2;
 
 int main(int argc , char *argv[])
 {
-    int master_socket, client_socket[MAX_CLIENTS],
-        cur_sd, max_sd;
+    int master_socket, 
+        client_socket[MAX_CLIENTS],
+        cur_sd,
+        max_sd;
     char *message;
+    const uint16_t PORT = get_port(argc, argv);
 
     socklen_t address_len;
     struct sockaddr_in address;
     fd_set read_fds;
-
 
     for (uint8_t i = 0; i < MAX_CLIENTS; i++)
         client_socket[i] = 0;
@@ -92,5 +93,16 @@ int main(int argc , char *argv[])
         }
     }
 }
+
+uint16_t get_port(int argc, char *argv[])
+{
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-port") == 0 && argv[i + 1])
+            return (uint16_t)atoi(argv[i + 1]);
+    }
+    return 2510;
+}
+
 
 

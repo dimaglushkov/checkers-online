@@ -20,37 +20,7 @@ packer.h
 network.h
 /home/allacee/CLionProjects/checkers-online/Server/src/network.h
 
-/home/allacee/CLionProjects/checkers-online/Server/src/network.c
-sys/socket.h
--
-stdio.h
--
-stdlib.h
--
-netinet/in.h
--
-unistd.h
--
-arpa/inet.h
--
-sys/types.h
--
-errno.h
--
-packer.h
-/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
-
 /home/allacee/CLionProjects/checkers-online/Server/src/network.h
-
-/home/allacee/CLionProjects/checkers-online/Server/src/packer.c
-stdlib.h
--
-stdio.h
--
-string.h
--
-packer.h
-/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
 
 /home/allacee/CLionProjects/checkers-online/Server/src/packer.h
 

@@ -7,101 +7,57 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#define STRING_SIZE 132
-
+const int SLEEP_TIME = 1;
 
 int create_connection(const char* ADDRESS, int PORT)
 {
     int sock;
     struct sockaddr_in server_address;
 
-
-
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    do
     {
-        perror("Error while creating socket");
-        return -1;
+        sleep(SLEEP_TIME);
+        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        {
+            perror("Creating socket");
+            continue;
+        }
+
+        memset(&server_address, '\0', sizeof(server_address));
+
+        server_address.sin_family = AF_INET;
+        server_address.sin_port = htons((uint16_t)PORT);
+
+        if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
+        {
+            perror("Converting addresses");
+            continue;
+        }
+
+        if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
+        {
+            perror("Connecting");
+            continue;
+        }
+
+        break;
     }
-
-    memset(&server_address, '\0', sizeof(server_address));
-
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons((uint16_t)PORT);
-
-    if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
-    {
-        perror("Error Invalid address");
-        return -1;
-    }
-
-    if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-    {
-        printf ("Connecting to %s:%d", ADDRESS, PORT);
-        perror("Error while connecting");
-        return -1;
-    }
+    while (1);
 
     return sock;
 }
 
-char* create_message(int index, int desk[8][8])
-{
-    int k = 2;
-    char* message = (char*) malloc (sizeof(char) * STRING_SIZE);
-
-    message[0] = (char) (index + '0');
-    message[1] = ' ';
-
-    for(int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++)
-        {
-            message[k] = (char)(desk[i][j] + '0');
-            message[k + 1] = ' ';
-            k += 2;
-        }
-
-    message[k] = '\0';
-
-    return message;
-}
-
 int send_message(int socket, char* message)
 {
-    return (int) send(socket, message, strlen(message) , 0 );
+    return (int) send(socket, message, strlen(message), 0 );
 }
 
-char* receive_message(int socket)
+char* receive_message(int socket, size_t str_size)
 {
     char* message;
-    message = (char*) malloc(STRING_SIZE * sizeof(char));
-    recv(socket, message, STRING_SIZE, 0);
+    message = (char*) malloc(str_size * sizeof(char));
+    recv(socket, message, str_size, 0);
     return message;
 }
 
-int receive_player_id(int socket)
-{
-    char* message;
-    message = (char*) malloc(2 * sizeof(char));
-    recv(socket, message, 2, 0);
-    int res = message[0] - '0';
-    free(message);
-    return res;
 
-}
-
-int parse_message(char* message, int* desk)
-{
-    int index = (int) message[0] - '0';
-    message += 2;
-    int i = 0;
-    while(*message)
-    {
-        if (*(message) != ' ')
-        {
-            *(desk + i) = *message - '0';
-            i++;
-        }
-        message++;
-    }
-    return index;
-}
