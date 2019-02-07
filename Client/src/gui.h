@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 
 int draw_destroy();
-int draw_intro (int connection_status);
+int draw_picture (int picture_id);
 int draw_desk_checkers(int desk[8][8], int game_status);
 int draw_gameplay_base(int player_id);
 int draw_selected(SDL_Rect);

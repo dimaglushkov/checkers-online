@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     host_addr = get_host_addr(argc, argv);
     host_port = get_host_port(argc, argv);
 
-    draw_intro(CONNECTING_PIC_ID);
+    draw_picture(CONNECTING_PIC_ID);
 
     do
     {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     }
     while(socket < 0);
 
-    draw_intro(WAITING_PIC_ID);
+    draw_picture(WAITING_PIC_ID);
 
     //initial messages
     player_id = receive_player_id(socket);
