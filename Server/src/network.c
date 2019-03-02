@@ -9,6 +9,14 @@
 
 #include "packer.h"
 
+//1 for debug mode
+char MODE_DEBUG = 0;
+
+void set_mode_debug()
+{
+    MODE_DEBUG = 1;
+}
+
 int create_socket (int domain, int type, int protocol)
 {
     int sockfd;
@@ -29,10 +37,10 @@ int accept_socket(int master_socket, struct sockaddr_in * address, socklen_t* ad
     {
         perror("[!] Error: accepting socket failed");
     }
-    else
+    else if (MODE_DEBUG)
         printf("[+] New connection - ip: %s port: %d.\n",
-                inet_ntoa(address -> sin_addr),
-                ntohs(address -> sin_port));
+               inet_ntoa(address -> sin_addr),
+               ntohs(address -> sin_port));
 
     return sock;
 }
@@ -68,8 +76,9 @@ void init_socket(int sockfd, struct sockaddr_in* address, uint16_t PORT)
         exit(EXIT_FAILURE);
     }
 
-    printf("[+] Listener on port %d \n", PORT);
-    puts("[+] Waiting for connections...");
+    if (MODE_DEBUG)
+        printf("[+] Listener on port %d \n[+] Waiting for connections...\n", PORT);
+
 }
 
 int select_fds(int max_sd, fd_set* readfds)
@@ -89,10 +98,10 @@ int select_fds(int max_sd, fd_set* readfds)
 void clear_socket(int cur_sd, int* client_socket, struct sockaddr_in * address,  socklen_t* address_len)
 {
     getpeername(cur_sd, (struct sockaddr*) address, address_len);
-
-    printf("[-] Host disconnected - ip: %s port: %d.\n",
-           inet_ntoa(address -> sin_addr),
-           ntohs(address -> sin_port));
+    if (MODE_DEBUG)
+        printf("[-] Host disconnected - ip: %s port: %d.\n",
+               inet_ntoa(address -> sin_addr),
+               ntohs(address -> sin_port));
 
     close(cur_sd);
     *client_socket = 0;

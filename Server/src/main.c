@@ -6,17 +6,19 @@
 #include "network.h"
 
 uint16_t get_port(int argc, char *argv[]);
+void get_mode(int argc, char *argv[]);
 
 const int MAX_CLIENTS = 2;
 
 int main(int argc , char *argv[])
 {
-    int master_socket, 
-        client_socket[MAX_CLIENTS],
-        cur_sd,
-        max_sd;
+    int master_socket,
+            client_socket[MAX_CLIENTS],
+            cur_sd,
+            max_sd;
     char *message;
     const uint16_t PORT = get_port(argc, argv);
+    get_mode(argc, argv);
 
     socklen_t address_len;
     struct sockaddr_in address;
@@ -87,7 +89,7 @@ int main(int argc , char *argv[])
                         send(cur_sd, message, strlen(message), 0);
                     }
                 }
-                
+
                 free(message);
             }
         }
@@ -98,11 +100,17 @@ uint16_t get_port(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "-port") == 0 && argv[i + 1])
+        if (strcmp(argv[i], "-p") == 0 && argv[i + 1])
             return (uint16_t)atoi(argv[i + 1]);
     }
     return 2510;
 }
 
-
-
+void get_mode(int argc, char *argv[])
+{
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-debug") == 0)
+            set_mode_debug();
+    }
+}

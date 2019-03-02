@@ -4,6 +4,8 @@
 
 #include "packer.h"
 
+extern char MODE_DEBUG;
+
 void count_checker(const char* req, int8_t* checkers, char index)
 {
 

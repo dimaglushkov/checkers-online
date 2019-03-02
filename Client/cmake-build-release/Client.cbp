@@ -102,6 +102,9 @@
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/packer.c">
 			<Option target="Client"/>
 		</Unit>
+		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/packer.h">
+			<Option target="Client"/>
+		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
