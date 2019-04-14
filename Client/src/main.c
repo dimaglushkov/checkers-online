@@ -123,20 +123,18 @@ int main(int argc, char* argv[])
         else
         {
 
-            free(message);
-
+            char * new_msg;
             // wait for your turn
             // message = receive_message(socket, MESSAGE_SIZE);
-            if (wait_for_your_turn(main_window, &message, socket, MESSAGE_SIZE))
+            if (wait_for_your_turn(main_window, &new_msg, socket, MESSAGE_SIZE))
             {
                 status = player_id + 7;
-                message = create_message(status, desk);
-                puts ("sending ending message");
-                puts (message);
+                message[0] = status + 48;
                 send_message(socket, message);
                 break;
             }
-            status = parse_message(message, &desk[0][0]);
+            status = parse_message(new_msg, &desk[0][0]);
+            free(new_msg);
             if (status > 2)
             {
                 draw_checkers_on_desk(main_window,
