@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "gui.h"
-#include "gameplay.h"
-#include "network.h"
-#include "packer.h"
+#include "include/gui.h"
+#include "include/gameplay.h"
+#include "include/network.h"
+#include "include/packer.h"
 
 char* get_host_addr(int argc, char *argv[]);
 int   get_host_port(int argc, char *argv[]);
@@ -14,7 +14,6 @@ const char *CONNECTING_BMP = "../img/connecting.bmp",
 
 const int INITIAL_MESSAGE_SIZE = 2,
           MESSAGE_SIZE = 132;
-
 
 int main(int argc, char* argv[])
 {
@@ -35,7 +34,6 @@ int main(int argc, char* argv[])
     host_addr = get_host_addr(argc, argv);
     host_port = get_host_port(argc, argv);
 
-
     create_window_with_surface(&main_window, &main_surface);
     checkers_surface = create_surface_from_bmp(CHECKERS_BMP);
     desk_surface = create_surface_from_bmp(DESK_BMP);
@@ -48,7 +46,6 @@ int main(int argc, char* argv[])
 
     message = receive_message(socket, INITIAL_MESSAGE_SIZE);
     player_id = parse_initial_message(message);
-    //TODO: move this
     free(message);
     opponents_id = player_id == 1 ? 2 : 1;
 
@@ -161,7 +158,7 @@ char* get_host_addr(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "-host") == 0 && argv[i + 1])
+        if (strcmp(argv[i], "--host") == 0 && argv[i + 1])
             return argv[i + 1];
     }
     return "127.0.0.1";
@@ -171,7 +168,7 @@ int get_host_port(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "-port") == 0 && argv[i + 1])
+        if (strcmp(argv[i], "--port") == 0 && argv[i + 1])
             return atoi(argv[i + 1]);
     }
     return 2510;

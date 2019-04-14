@@ -1,4 +1,4 @@
-#include "gui.h"
+#include "include/gui.h"
 
 const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
         SMALL_WHITE_ID = 0,

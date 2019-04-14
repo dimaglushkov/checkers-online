@@ -1,6 +1,6 @@
 #include <SDL2/SDL_events.h>
-#include "gameplay.h"
-#include "gui.h"
+#include "include/gameplay.h"
+#include "include/gui.h"
 
 SDL_Rect pos_t_to_rect(pos_t);
 pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[8][8], pos_t cur_pos);
