@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     int socket, host_port;
     char* host_addr;
 
-    int status, player_id, opponents_id;
+    int status = 0, player_id, opponents_id;
     char* message = NULL;
     int desk[8][8];
 
@@ -131,6 +131,8 @@ int main(int argc, char* argv[])
             {
                 status = player_id + 7;
                 message = create_message(status, desk);
+                puts ("sending ending message");
+                puts (message);
                 send_message(socket, message);
                 break;
             }
@@ -166,7 +168,7 @@ char* get_host_addr(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "--host") == 0 && argv[i + 1])
+        if (strcmp(argv[i], "-h") == 0 && argv[i + 1])
             return argv[i + 1];
     }
     return "127.0.0.1";
@@ -176,7 +178,7 @@ int get_host_port(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "--port") == 0 && argv[i + 1])
+        if (strcmp(argv[i], "-p") == 0 && argv[i + 1])
             return atoi(argv[i + 1]);
     }
     return 2510;

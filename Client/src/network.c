@@ -57,6 +57,11 @@ char* receive_message(int socket, size_t str_size, int FLAG)
     char* message = NULL;
     message = (char*) malloc(str_size * sizeof(char));
     recv(socket, message, str_size, FLAG);
+    if (message == NULL)
+    {
+        free(message);
+        return NULL;
+    }
     return message;
 }
 
