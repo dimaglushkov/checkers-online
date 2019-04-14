@@ -52,11 +52,11 @@ int send_message(int socket, char* message)
     return (int) send(socket, message, strlen(message), 0 );
 }
 
-char* receive_message(int socket, size_t str_size)
+char* receive_message(int socket, size_t str_size, int FLAG)
 {
-    char* message;
+    char* message = NULL;
     message = (char*) malloc(str_size * sizeof(char));
-    recv(socket, message, str_size, 0);
+    recv(socket, message, str_size, FLAG);
     return message;
 }
 

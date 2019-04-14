@@ -32,7 +32,6 @@ int parse_message(char* message, int* desk)
     int i = 0;
     while(*message)
     {
-        //TODO: += 2 ?
         if (*(message) != ' ')
         {
             *(desk + i) = char_to_int(*message);

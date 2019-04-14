@@ -17,6 +17,8 @@ int game_start(
         int desk[8][8],
         int status);
 
+int wait_for_your_turn(SDL_Window * window, char ** message, int socket, int MESSAGE_SIZE);
+
 int count_checkers_on_desk(int player_id, int desk[8][8]);
 
 #endif

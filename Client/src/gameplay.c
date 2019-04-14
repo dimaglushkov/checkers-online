@@ -1,6 +1,8 @@
 #include <SDL2/SDL_events.h>
+#include <sys/socket.h>
 #include "include/gameplay.h"
 #include "include/gui.h"
+#include "include/network.h"
 
 SDL_Rect pos_t_to_rect(pos_t);
 pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[8][8], pos_t cur_pos);
@@ -236,6 +238,41 @@ int game_start(
         }
 
     }
+
+}
+
+
+int wait_for_your_turn( SDL_Window * window, char ** message, int socket, int MESSAGE_SIZE )
+{
+    SDL_Event event;
+    SDL_Surface * surface = SDL_GetWindowSurface(window);
+
+    while(1)
+    {
+        SDL_WaitEvent(&event);
+        if(event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            //handling mouse press on exit button
+            if(event.button.x > 700 && event.button.x < 876
+               && event.button.y > 675 && event.button.y < 726)
+                return 1;
+
+
+            //options
+            if(event.button.x > 499 && event.button.x < 675
+               && event.button.y > 675 && event.button.y < 726)
+                draw_rules();
+
+        }
+
+        *message = receive_message(socket, MESSAGE_SIZE, MSG_DONTWAIT);
+        if (*message != NULL)
+            return 0;
+
+    }
+
+
+
 
 }
 

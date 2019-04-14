@@ -44,12 +44,12 @@ int main(int argc, char* argv[])
     socket = create_connection(host_addr, host_port);
     draw_image(&main_window, &main_surface, WAITING_BMP);
 
-    message = receive_message(socket, INITIAL_MESSAGE_SIZE);
+    message = receive_message(socket, INITIAL_MESSAGE_SIZE, 0);
     player_id = parse_initial_message(message);
     free(message);
     opponents_id = player_id == 1 ? 2 : 1;
 
-    message = receive_message(socket, MESSAGE_SIZE);
+    message = receive_message(socket, MESSAGE_SIZE, 0);
     status = parse_message(message, &desk[0][0]);
 
     draw_game_background(main_window,
@@ -125,7 +125,15 @@ int main(int argc, char* argv[])
 
             free(message);
 
-            message = receive_message(socket, MESSAGE_SIZE);
+            // wait for your turn
+            // message = receive_message(socket, MESSAGE_SIZE);
+            if (wait_for_your_turn(main_window, &message, socket, MESSAGE_SIZE))
+            {
+                status = player_id + 7;
+                message = create_message(status, desk);
+                send_message(socket, message);
+                break;
+            }
             status = parse_message(message, &desk[0][0]);
             if (status > 2)
             {
