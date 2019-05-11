@@ -7,10 +7,9 @@
 #include <sys/types.h>
 #include <errno.h>
 
-#include "packer.h"
+#include "include/packer.h"
 
-//1 for debug mode
-char MODE_DEBUG = 0;
+extern char MODE_DEBUG;
 
 void set_mode_debug()
 {

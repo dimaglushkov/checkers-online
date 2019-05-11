@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/allacee/CLionProjects/checkers-online/Server/src/include/network.h
+
+/home/allacee/CLionProjects/checkers-online/Server/src/include/packer.h
+
 /home/allacee/CLionProjects/checkers-online/Server/src/main.c
 stdio.h
 -
@@ -15,12 +19,18 @@ stdlib.h
 -
 netinet/in.h
 -
-packer.h
-/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
-network.h
-/home/allacee/CLionProjects/checkers-online/Server/src/network.h
+include/packer.h
+/home/allacee/CLionProjects/checkers-online/Server/src/include/packer.h
+include/network.h
+/home/allacee/CLionProjects/checkers-online/Server/src/include/network.h
 
-/home/allacee/CLionProjects/checkers-online/Server/src/network.h
-
-/home/allacee/CLionProjects/checkers-online/Server/src/packer.h
+/home/allacee/CLionProjects/checkers-online/Server/src/packer.c
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+include/packer.h
+/home/allacee/CLionProjects/checkers-online/Server/src/include/packer.h
 

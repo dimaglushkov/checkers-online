@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "packer.h"
+#include "include/packer.h"
 
 extern char MODE_DEBUG;
 
@@ -24,11 +24,13 @@ void count_checker(const char* req, int8_t* checkers, char index)
 char* update_message(char* message)
 {
 
-    printf("[+] Server received message: %s\n", message);
+    if (MODE_DEBUG)
+        printf("[+] Server received message: %s\n", message);
 
     if (message[0] > '2')
     {
-        printf("[+] Server sending response: %s\n", message);
+        if (MODE_DEBUG)
+            printf("[+] Server sending response: %s\n", message);
         return message;
     }
 
@@ -45,7 +47,8 @@ char* update_message(char* message)
 
     message[0] = (char) (index + '0');
 
-    printf("[+] Server sending response: %s\n", message);
+    if(MODE_DEBUG)
+        printf("[+] Server sending response: %s\n", message);
     return message;
 
 }

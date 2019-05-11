@@ -2,12 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <netinet/in.h>
-#include "packer.h"
-#include "network.h"
+#include "include/packer.h"
+#include "include/network.h"
 
 uint16_t get_port(int argc, char *argv[]);
 void get_mode(int argc, char *argv[]);
 
+char MODE_DEBUG = 0;
 const int MAX_CLIENTS = 2;
 
 int main(int argc , char *argv[])
@@ -51,7 +52,8 @@ int main(int argc , char *argv[])
                 if( client_socket[i] == 0 )
                 {
                     client_socket[i] = cur_sd;
-                    printf("[+] Adding to list of sockets as %d\n", i);
+                    if(MODE_DEBUG)
+                        printf("[+] Adding to list of sockets as %d\n", i);
 
                     if (i % 2 == 1)
                         start_game(client_socket, i);
