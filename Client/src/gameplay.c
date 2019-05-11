@@ -11,30 +11,20 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos);
 void set_option(pos_t* where_to, int x, int y);
 pos_t make_move(int desk[8][8], pos_t cur_pos, pos_t new);
 int count_options(pos_t options_pos[]);
-int select_checker(
-        SDL_Window* main_window,
-        SDL_Surface* main_surface,
-        SDL_Surface* checkers_surface,
-        SDL_Rect* texture_rects,
-        int checker_type,
-        pos_t *cur_pos,
-        pos_t **options_pos,
-        SDL_Rect** options_rect);
-
+int select_checker(SDL_Window* main_window, SDL_Surface* checkers_surface, SDL_Rect* texture_rects, int checker_type, pos_t *cur_pos, pos_t **options_pos, SDL_Rect** options_rect);
 void check_growing(int player_id, pos_t cur_pos, int desk[8][8]);
 
 int game_start(
-        SDL_Window* main_window,
-        SDL_Surface* main_surface,
-        SDL_Surface* desk_surface,
-        SDL_Surface* checkers_surface,
-        SDL_Rect* texture_rects,
-        int player_id,
-        int opponent_id,
-        int desk[8][8],
+        SDL_Window* main_window, 
+        SDL_Surface* desk_surface, 
+        SDL_Surface* checkers_surface, 
+        SDL_Rect* texture_rects, 
+        int player_id, 
+        int opponent_id, 
+        int desk[8][8], 
         int status)
 {
-    pos_t cur_pos = {0,0};
+    pos_t cur_pos = {0, 0};
     SDL_Event event;
     int is_selected = 0, is_moved = 0;
     pos_t *options_pos = NULL;
@@ -76,12 +66,11 @@ int game_start(
                     {
     
                         if (is_selected)
-                            draw_checkers_on_desk(main_window,
-                                    main_surface,
-                                    desk_surface,
-                                    checkers_surface,
-                                    texture_rects,
-                                    desk,
+                            draw_checkers_on_desk(main_window, 
+                                    desk_surface, 
+                                    checkers_surface, 
+                                    texture_rects, 
+                                    desk, 
                                     status);
     
                         cur_pos.raw = selected_pos.raw;
@@ -95,13 +84,12 @@ int game_start(
                         (options_pos = find_options(player_id, opponent_id, &checker_type, desk, cur_pos));
     
                         is_selected = select_checker(
-                                main_window,
-                                main_surface,
-                                checkers_surface,
-                                texture_rects,
-                                checker_type,
-                                &cur_pos,
-                                &options_pos,
+                                main_window, 
+                                checkers_surface, 
+                                texture_rects, 
+                                checker_type, 
+                                &cur_pos, 
+                                &options_pos, 
                                 &options_rect);
 
                         continue;
@@ -121,12 +109,12 @@ int game_start(
     
                                 cur_pos = make_move(desk, cur_pos, options_pos[i]);
                                 check_growing(player_id, cur_pos, desk);
-                                draw_checkers_on_desk(main_window,
-                                        main_surface,
-                                        desk_surface,
-                                        checkers_surface,
-                                        texture_rects,
-                                        desk,
+                                draw_checkers_on_desk(main_window, 
+                                        
+                                        desk_surface, 
+                                        checkers_surface, 
+                                        texture_rects, 
+                                        desk, 
                                         status);
 
                                 free(options_pos);
@@ -139,11 +127,11 @@ int game_start(
                                 {
 
                                     draw_deads(
-                                            main_window,
-                                            main_surface,
-                                            checkers_surface,
-                                            texture_rects,
-                                            opponent_id,
+                                            main_window, 
+                                            
+                                            checkers_surface, 
+                                            texture_rects, 
+                                            opponent_id, 
                                             12 - new_num_of_checkers_alive);
     
                                     options_pos = find_options_after(opponent_id, desk, cur_pos);
@@ -152,13 +140,13 @@ int game_start(
                                     {
 
                                         select_checker(
-                                                main_window,
-                                                main_surface,
-                                                checkers_surface,
-                                                texture_rects,
-                                                0,
-                                                &cur_pos,
-                                                &options_pos,
+                                                main_window, 
+                                                
+                                                checkers_surface, 
+                                                texture_rects, 
+                                                0, 
+                                                &cur_pos, 
+                                                &options_pos, 
                                                 &options_rect);
                                         is_moved++;
                                         break;
@@ -189,19 +177,19 @@ int game_start(
 
                             cur_pos = make_move(desk, cur_pos, options_pos[i]);
                             check_growing(player_id, cur_pos, desk);
-                            draw_checkers_on_desk(main_window,
-                                    main_surface,
-                                    desk_surface,
-                                    checkers_surface,
-                                    texture_rects,
-                                    desk,
+                            draw_checkers_on_desk(main_window, 
+                                    
+                                    desk_surface, 
+                                    checkers_surface, 
+                                    texture_rects, 
+                                    desk, 
                                     status);
                             draw_deads(
-                                    main_window,
-                                    main_surface,
-                                    checkers_surface,
-                                    texture_rects,
-                                    opponent_id,
+                                    main_window, 
+                                    
+                                    checkers_surface, 
+                                    texture_rects, 
+                                    opponent_id, 
                                     12 - count_checkers_on_desk(opponent_id, desk));
 
                             free(options_pos);
@@ -214,13 +202,13 @@ int game_start(
                             {
 
                                 select_checker(
-                                        main_window,
-                                        main_surface,
-                                        checkers_surface,
-                                        texture_rects,
-                                        0,
-                                        &cur_pos,
-                                        &options_pos,
+                                        main_window, 
+                                        
+                                        checkers_surface, 
+                                        texture_rects, 
+                                        0, 
+                                        &cur_pos, 
+                                        &options_pos, 
                                         &options_rect);
                                 break;
                             }
@@ -242,10 +230,9 @@ int game_start(
 }
 
 
-int wait_for_your_turn( SDL_Window * window, char ** message, int socket, int MESSAGE_SIZE )
+int wait_for_your_turn(char ** message, int socket, int MESSAGE_SIZE)
 {
     SDL_Event event;
-    SDL_Surface * surface = SDL_GetWindowSurface(window);
 
     while(1)
     {
@@ -279,21 +266,19 @@ int wait_for_your_turn( SDL_Window * window, char ** message, int socket, int ME
 
 
 int select_checker(
-        SDL_Window* main_window,
-        SDL_Surface* main_surface,
-        SDL_Surface* checkers_surface,
-        SDL_Rect* texture_rects,
-        int checker_type,
-        pos_t *cur_pos,
-        pos_t **options_pos,
+        SDL_Window* main_window, 
+        SDL_Surface* checkers_surface, 
+        SDL_Rect* texture_rects, 
+        int checker_type, 
+        pos_t *cur_pos, 
+        pos_t **options_pos, 
         SDL_Rect** options_rect)
 {
 
     draw_selected(
-            main_window,
-            main_surface,
-            checkers_surface,
-            texture_rects,
+            main_window, 
+            checkers_surface, 
+            texture_rects, 
             pos_t_to_rect(*cur_pos));
 
     int times = (checker_type ? 13 : 4);
@@ -303,11 +288,10 @@ int select_checker(
         (*options_rect)[k] = pos_t_to_rect((*options_pos)[k]);
 
     draw_options(
-            main_window,
-            main_surface,
-            checkers_surface,
-            texture_rects,
-            times,
+            main_window, 
+            checkers_surface, 
+            texture_rects, 
+            times, 
             *options_rect);
     return 1;
 

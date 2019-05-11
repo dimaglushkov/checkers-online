@@ -1,6 +1,6 @@
 #include "include/gui.h"
 
-const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
+static const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
         SMALL_WHITE_ID = 0,
         SMALL_BLACK_ID = 1,
         WHITE_ID = 2,
@@ -11,12 +11,10 @@ const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
         SELECTED_ID = 7,
         CURRENT_TURN_ID = 8,
         DESK_ID = 9;
+static const char* GAME_TITLE = "Checkers-online";
 
-
-const char* GAME_TITLE = "Checkers-online";
 
 SDL_Rect create_rect(int x, int y, int w, int h);
-
 
 int create_window_with_surface(SDL_Window** window, SDL_Surface** surface)
 {
@@ -43,15 +41,12 @@ SDL_Surface* create_surface_from_bmp(const char* path)
     return surface;
 }
 
-int draw_image (SDL_Window** main_window, SDL_Surface** main_surface, const char* path)
+int draw_image (SDL_Window** main_window, const char* path)
 {
-
-    if (main_surface == NULL || main_window == NULL)
-        return  1;
-
+    SDL_Surface* main_surface = SDL_GetWindowSurface(*main_window);
     SDL_Surface* loading_surface = SDL_LoadBMP(path);
 
-    SDL_BlitSurface(loading_surface, NULL, *main_surface, NULL);
+    SDL_BlitSurface(loading_surface, NULL, main_surface, NULL);
     SDL_UpdateWindowSurface(*main_window);
 
     SDL_FreeSurface(loading_surface);
@@ -94,12 +89,12 @@ void draw_rules()
 
 int draw_game_background(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* checkers_surface,
         SDL_Rect* texture_rects,
         int player_id)
 {
     SDL_Surface* base_surface;
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
 
     base_surface = SDL_LoadBMP("../img/background.bmp");
     if (!base_surface)
@@ -125,7 +120,6 @@ int draw_game_background(
 
 int draw_checkers_on_desk(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* desk_surface,
         SDL_Surface* checkers_surface,
         SDL_Rect* texture_rects,
@@ -136,6 +130,7 @@ int draw_checkers_on_desk(
     const int x_on_surface_start = 150,
               y_on_surface_start = 50,
               step_on_surface = 75;
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
     SDL_BlitSurface(desk_surface, NULL, main_surface, &texture_rects[DESK_ID]);
     if (status == 1)
         SDL_BlitSurface(checkers_surface,
@@ -202,23 +197,23 @@ int draw_checkers_on_desk(
 
 void draw_selected(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* checkers_surface,
         SDL_Rect* texture_rects,
         SDL_Rect draw_at)
 {
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
     SDL_BlitSurface(checkers_surface, &texture_rects[SELECTED_ID], main_surface, &draw_at);
     SDL_UpdateWindowSurface(main_window);
 }
 
 int draw_options(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* checkers_surface,
         SDL_Rect* texture_rects,
         int number_of_options,
         SDL_Rect* opt_rect)
 {
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
     for (int i = 0; i < number_of_options; i++)
     {
         if (opt_rect[i].x == 0)
@@ -233,10 +228,10 @@ int draw_options(
 
 int free_window_surfaces(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* checkers_surface,
         SDL_Surface* desk_surface)
 {
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
     SDL_FreeSurface(main_surface);
     SDL_FreeSurface(checkers_surface);
     SDL_FreeSurface(desk_surface);
@@ -249,12 +244,12 @@ int free_window_surfaces(
 
 void draw_deads(
         SDL_Window* main_window,
-        SDL_Surface* main_surface,
         SDL_Surface* checkers_surface,
         SDL_Rect* texture_rects,
         int player_id,
         int number_of_deads)
 {
+    SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
     SDL_Rect* current_players_color;
     SDL_Rect draw_at;
 

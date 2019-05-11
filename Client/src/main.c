@@ -40,9 +40,9 @@ int main(int argc, char* argv[])
     create_texture_rects(texture_rects);
 
 
-    draw_image(&main_window, &main_surface, CONNECTING_BMP);
+    draw_image(&main_window, CONNECTING_BMP);
     socket = create_connection(host_addr, host_port);
-    draw_image(&main_window, &main_surface, WAITING_BMP);
+    draw_image(&main_window, WAITING_BMP);
 
     message = receive_message(socket, INITIAL_MESSAGE_SIZE, 0);
     player_id = parse_initial_message(message);
@@ -52,53 +52,19 @@ int main(int argc, char* argv[])
     message = receive_message(socket, MESSAGE_SIZE, 0);
     status = parse_message(message, &desk[0][0]);
 
-    draw_game_background(main_window,
-            main_surface,
-            checkers_surface,
-            texture_rects,
-            player_id);
-
-    draw_checkers_on_desk(main_window,
-            main_surface,
-            desk_surface,
-            checkers_surface,
-            texture_rects,
-            desk,
-            status);
+    draw_game_background(main_window, checkers_surface, texture_rects, player_id);
+    draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);
 
 
     while (1)
     {
         if (status == player_id)
         {
-            draw_checkers_on_desk(
-                    main_window,
-                    main_surface,
-                    desk_surface,
-                    checkers_surface,
-                    texture_rects,
-                    desk,
-                    status);
+            draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);
 
-            draw_deads(
-                    main_window,
-                    main_surface,
-                    checkers_surface,
-                    texture_rects,
-                    player_id,
-                    12 - count_checkers_on_desk(player_id, desk));
+            draw_deads(main_window, checkers_surface, texture_rects, player_id, 12 - count_checkers_on_desk(player_id, desk));
 
-            //here
-            status = game_start(
-                         main_window,
-                         main_surface,
-                         desk_surface,
-                         checkers_surface,
-                         texture_rects,
-                         player_id,
-                         opponents_id,
-                         desk,
-                         status);
+            status = game_start(main_window, desk_surface, checkers_surface, texture_rects, player_id, opponents_id, desk, status);
 
             if(status > 2)
             {
@@ -108,13 +74,7 @@ int main(int argc, char* argv[])
                 break;
             }
 
-            draw_checkers_on_desk(main_window,
-                    main_surface,
-                    desk_surface,
-                    checkers_surface,
-                    texture_rects,
-                    desk,
-                    status);
+            draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);
 
             free(message);
             message = create_message(player_id, desk);
@@ -124,9 +84,7 @@ int main(int argc, char* argv[])
         {
 
             char * new_msg;
-            // wait for your turn
-            // message = receive_message(socket, MESSAGE_SIZE);
-            if (wait_for_your_turn(main_window, &new_msg, socket, MESSAGE_SIZE))
+            if (wait_for_your_turn(&new_msg, socket, MESSAGE_SIZE))
             {
                 status = player_id + 7;
                 message[0] = status + 48;
@@ -137,13 +95,7 @@ int main(int argc, char* argv[])
             free(new_msg);
             if (status > 2)
             {
-                draw_checkers_on_desk(main_window,
-                        main_surface,
-                        desk_surface,
-                        checkers_surface,
-                        texture_rects,
-                        desk,
-                        status);
+                draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);
                 break;
             }
         }
@@ -153,11 +105,7 @@ int main(int argc, char* argv[])
     draw_result(status);
 
     free(message);
-    free_window_surfaces(
-            main_window,
-            main_surface,
-            checkers_surface,
-            desk_surface);
+    free_window_surfaces(main_window, checkers_surface, desk_surface);
 
     return 0;
 }

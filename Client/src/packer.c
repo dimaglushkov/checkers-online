@@ -51,5 +51,5 @@ int parse_initial_message(char* message)
 
 int char_to_int(char sym)
 {
-    return sym - 48;
+    return (sym >= '0' && sym <= '9') ? sym - 48 : -1;
 }

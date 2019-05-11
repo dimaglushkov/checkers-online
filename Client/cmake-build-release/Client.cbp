@@ -81,13 +81,7 @@
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.c">
 			<Option target="Client"/>
 		</Unit>
-		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/gameplay.h">
-			<Option target="Client"/>
-		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/gui.c">
-			<Option target="Client"/>
-		</Unit>
-		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/gui.h">
 			<Option target="Client"/>
 		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/main.c">
@@ -96,13 +90,7 @@
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/network.c">
 			<Option target="Client"/>
 		</Unit>
-		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/network.h">
-			<Option target="Client"/>
-		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/packer.c">
-			<Option target="Client"/>
-		</Unit>
-		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/src/packer.h">
 			<Option target="Client"/>
 		</Unit>
 		<Unit filename="/home/allacee/CLionProjects/checkers-online/Client/CMakeLists.txt">
