@@ -112,7 +112,7 @@ void get_mode(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "--debug") == 0)
+        if (strcmp(argv[i], "--info") == 0)
             set_mode_debug();
     }
 }
