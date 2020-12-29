@@ -7,10 +7,10 @@ Loading screen | Game screen
 
 ### Installation
 _To compile client part it is necessary to install SDL2.0 on your machine.
-Check [SDL home page](https://www.libsdl.org/download-2.0.php) for more information.__
-0. Install SDL2.0 (for example `$ sudo apt-get install libsdl2-dev` or `# pacman -S sdl2`)
-1. `$ git clone https://github.com/allacee/checkers-online.git`
-2. `$ cd checkers-online`
+Check [SDL home page](https://www.libsdl.org/download-2.0.php) for more information._
+1. Install SDL2.0 (for example `$ sudo apt-get install libsdl2-dev` or `# pacman -S sdl2`)
+2. `$ git clone https://github.com/allacee/checkers-online.git`
+3. `$ cd checkers-online`
 4. `$ ./install`
 
 ### Launching
