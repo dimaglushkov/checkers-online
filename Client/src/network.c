@@ -5,7 +5,9 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <ctype.h>
+
+#include "include/network.h"
+#include "include/packer.h"
 
 const int SLEEP_TIME = 1;
 
@@ -49,15 +51,15 @@ int create_connection(const char* ADDRESS, int PORT)
 
 int send_message(int socket, char* message)
 {
-    return (int) send(socket, message, strlen(message), 0 );
+    return (int) send(socket, message, MESSAGE_SIZE, 0 );
 }
 
 char* receive_message(int socket, size_t str_size, int FLAG)
 {
     char* message = NULL;
     message = (char*) malloc(str_size * sizeof(char));
-    recv(socket, message, str_size, FLAG);
-    if (message == NULL)
+    int n = recv(socket, message, str_size, FLAG);
+    if (n < str_size - 1 || n == -1 || message == NULL)
     {
         free(message);
         return NULL;
@@ -65,4 +67,8 @@ char* receive_message(int socket, size_t str_size, int FLAG)
     return message;
 }
 
+void close_connection(int socket) {
+    shutdown(socket, SHUT_WR);
+    close(socket);
+}
 

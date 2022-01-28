@@ -1,1 +1,0 @@
-/usr/bin/cc -O3 -DNDEBUG   CMakeFiles/Server.dir/src/packer.c.o CMakeFiles/Server.dir/src/network.c.o CMakeFiles/Server.dir/src/main.c.o  -o Server 

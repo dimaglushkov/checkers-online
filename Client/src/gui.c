@@ -2,9 +2,9 @@
 
 static const int SCREEN_WIDTH = 900, SCREEN_HEIGHT = 750,
         SMALL_WHITE_ID = 0,
-        SMALL_BLACK_ID = 1,
-        WHITE_ID = 2,
-        BLACK_ID = 3,
+        SMALL_BLACK_ID = 3,
+        WHITE_ID = 1,
+        BLACK_ID = 2,
         KING_WHITE_ID = 4,
         KING_BLACK_ID = 5,
         OPTION_ID = 6,
@@ -152,38 +152,11 @@ int draw_checkers_on_desk(
     {
         for (int j = 0; j < 8; j++)
         {
-            switch (desk[i][j])
-            {
-                case (1):
-                    SDL_BlitSurface(checkers_surface,
-                            &texture_rects[WHITE_ID],
+            if (desk[i][j])
+                SDL_BlitSurface(checkers_surface,
+                            &texture_rects[desk[i][j]],
                             main_surface,
                             &checker_on_desk);
-                    break;
-
-                case (2):
-                    SDL_BlitSurface(checkers_surface,
-                            &texture_rects[BLACK_ID],
-                            main_surface,
-                            &checker_on_desk);
-                    break;
-
-                case (4):
-                    SDL_BlitSurface(checkers_surface,
-                            &texture_rects[KING_WHITE_ID],
-                            main_surface,
-                            &checker_on_desk);
-                    break;
-
-                case (5):
-                    SDL_BlitSurface(checkers_surface,
-                            &texture_rects[KING_BLACK_ID],
-                            main_surface,
-                            &checker_on_desk);
-                    break;
-
-                default:;
-            }
 
             checker_on_desk.x += step_on_surface;
         }
@@ -275,42 +248,23 @@ void draw_deads(
 
 void draw_result(int status)
 {
-    char* result = malloc(200);
-    result[0] = '\0';
-  /*const int WHITES_WON = 6,
-    BLACKS_WON = 7,
-    BLACKS_WON_WHITES_LEFT = 8,
-    WHITES_WON_BLACKS_LEFT = 9;*/
+    char* results[] = {
+            "Whites won!",
+            "Blacks won!",
+            "Blacks won! (Whites left)",
+            "Whites won! (Blacks left)",
+            "Wrong end status received"
+            };
 
-    switch (status)
-    {
-
-        case(6):
-            strcat(result, "Whites won!");
-            break;
-
-        case(7):
-            strcat(result, "Blacks won!");
-            break;
-
-        case(8):
-            strcat(result, "Blacks won! (Whites left)");
-            break;
-
-        case(9):
-            strcat(result, "Whites won! (Blacks left)");
-            break;
-
-        default:
-            strcat(result, "Wrong end status received");
-
-    }
-
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
-                            "Congratulations!",
-                            result,
-                            NULL);
-
-    free(result);
+    if (status >= 6 && status <= 9)
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                                 "Congratulations!",
+                                 results[status - 6],
+                                 NULL);
+    else
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                                 "Whoops!",
+                                 results[4],
+                                 NULL);
 }
 

@@ -9,7 +9,7 @@ uint16_t get_port(int argc, char *argv[]);
 void get_mode(int argc, char *argv[]);
 
 char MODE_DEBUG = 0;
-const int MAX_CLIENTS = 2;
+const uint8_t MAX_CLIENTS = 2;
 
 int main(int argc , char *argv[])
 {
@@ -69,10 +69,15 @@ int main(int argc , char *argv[])
 
             if (FD_ISSET(cur_sd, &read_fds))
             {
-                message = malloc(STRING_SIZE);
-
-                if (recv(cur_sd, message, STRING_SIZE, 0) == 0)
+                message = malloc(MESSAGE_SIZE);
+                ssize_t n = recv(cur_sd, message, MESSAGE_SIZE, 0);
+                if (n == 0)
                     clear_socket(cur_sd, &client_socket[i], &address, &address_len);
+                else if (n < MESSAGE_SIZE - 1){
+                    if (MODE_DEBUG)
+                        printf("[!] Server received weird message (probably because socket closed): %s\n", message);
+                    continue;
+                }
                 else
                 {
                     int16_t to_send;
@@ -80,7 +85,7 @@ int main(int argc , char *argv[])
                     to_send = (int16_t)(i % 2 == 0? 1 : 0);
                     cur_sd = client_socket[to_send];
 
-                    message[STRING_SIZE - 1] = '\0';
+                    message[MESSAGE_SIZE - 1] = '\0';
                     message = update_message(message);
                     send(cur_sd, message, strlen(message), 0);
 

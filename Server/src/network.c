@@ -6,8 +6,12 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <signal.h>
 
+#include "include/network.h"
 #include "include/packer.h"
+
+const char * INITIAL_MESSAGE = "12020202002020202202020200000000000000000010101011010101001010101";
 
 extern char MODE_DEBUG;
 
@@ -19,6 +23,7 @@ void set_mode_debug()
 int create_socket (int domain, int type, int protocol)
 {
     int sockfd;
+    signal(SIGPIPE, SIG_IGN);
 
     if( (sockfd = socket(domain, type, protocol)) == 0)
     {
@@ -53,31 +58,24 @@ void init_address(struct sockaddr_in * address, uint16_t PORT)
 
 void init_socket(int sockfd, struct sockaddr_in* address, uint16_t PORT)
 {
-
     int opt = 1;
-
-
     if( setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0 )
     {
         perror("[!] Error: setting socket options failed");
         exit(EXIT_FAILURE);
     }
-
     if (bind(sockfd, (struct sockaddr *) address, sizeof(*address))<0)
     {
         perror("[!] Error: binding failed");
         exit(EXIT_FAILURE);
     }
-
     if (listen(sockfd, 2) < 0)
     {
         perror("[!] Error: listen() failed");
         exit(EXIT_FAILURE);
     }
-
     if (MODE_DEBUG)
         printf("[+] Listener on port %d \n[+] Waiting for connections...\n", PORT);
-
 }
 
 int select_fds(int max_sd, fd_set* readfds)
@@ -109,17 +107,15 @@ void clear_socket(int cur_sd, int* client_socket, struct sockaddr_in * address, 
 void start_game(int* client_socket, int second_id)
 {
     //sending ids
-    send(client_socket[second_id - 1], "1", 2, 0);
-    send(client_socket[second_id], "2", 2, 0);
+    send(client_socket[second_id - 1], "1", INITIAL_MESSAGE_SIZE, 0);
+    send(client_socket[second_id], "2", INITIAL_MESSAGE_SIZE, 0);
 
     //sending initial messages to start game
-    char * initial_message = init_message();
-    send(client_socket[second_id - 1], initial_message, STRING_SIZE, 0);
-    send(client_socket[second_id], initial_message, STRING_SIZE, 0);
-    free(initial_message);
+    send(client_socket[second_id - 1], INITIAL_MESSAGE, MESSAGE_SIZE, 0);
+    send(client_socket[second_id], INITIAL_MESSAGE, MESSAGE_SIZE, 0);
 }
 
-void set_fd(int* max_sd, unsigned int MAX_CLIENTS, const int* client_socket, fd_set* read_fds)
+void set_fd(int* max_sd, uint8_t MAX_CLIENTS, const int* client_socket, fd_set* read_fds)
 {
 
     int cur_sd;

@@ -12,9 +12,6 @@ const char *CONNECTING_BMP = "../img/connecting.bmp",
            *CHECKERS_BMP = "../img/checkers.bmp",
            *DESK_BMP = "../img/desk.bmp";
 
-const int INITIAL_MESSAGE_SIZE = 2,
-          MESSAGE_SIZE = 132;
-
 int main(int argc, char* argv[])
 {
 
@@ -50,7 +47,7 @@ int main(int argc, char* argv[])
     opponents_id = player_id == 1 ? 2 : 1;
 
     message = receive_message(socket, MESSAGE_SIZE, 0);
-    status = parse_message(message, &desk[0][0]);
+    status = parse_message(message, desk);
 
     draw_game_background(main_window, checkers_surface, texture_rects, player_id);
     draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);
@@ -82,16 +79,16 @@ int main(int argc, char* argv[])
         }
         else
         {
-
             char * new_msg;
             if (wait_for_your_turn(&new_msg, socket, MESSAGE_SIZE))
             {
                 status = player_id + 7;
-                message[0] = status + 48;
+                free(message);
+                message = create_message(status, desk);
                 send_message(socket, message);
                 break;
             }
-            status = parse_message(new_msg, &desk[0][0]);
+            status = parse_message(new_msg, desk);
             free(new_msg);
             if (status > 2)
             {
@@ -106,7 +103,7 @@ int main(int argc, char* argv[])
 
     free(message);
     free_window_surfaces(main_window, checkers_surface, desk_surface);
-
+//    close_connection(socket);
     return 0;
 }
 

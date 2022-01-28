@@ -32,6 +32,9 @@ int game_start(
     int num_of_checkers_alive = count_checkers_on_desk(opponent_id, desk);
     int checker_type = 0; // 0 for usual 1 for big
 
+// yeah this cycle is "kinda" ugly
+// but don't see a reason to do smth with it now tbh
+// (especially coz it's actually working properly)
     while(SDL_WaitEvent(&event))
     {
         if (event.type == SDL_MOUSEBUTTONDOWN )
@@ -255,12 +258,7 @@ int wait_for_your_turn(char ** message, int socket, int MESSAGE_SIZE)
         *message = receive_message(socket, MESSAGE_SIZE, MSG_DONTWAIT);
         if (*message != NULL)
             return 0;
-
     }
-
-
-
-
 }
 
 
@@ -337,21 +335,17 @@ SDL_Rect pos_t_to_rect(pos_t position)
 
     if(position.col == -1)
     {
-
         rect.x = 0;
         rect.y = 0;
         rect.h = 0;
         rect.w = 0;
-
     }
     else
     {
-
         rect.x = (position.col * 75) + 150;
         rect.y = (position.raw * 75)+ 50;
         rect.h = 75;
         rect.w = 75;
-
     }
     return rect;
 }
@@ -364,17 +358,12 @@ void set_option(pos_t* where_to, int x, int y)
 
 pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[8][8], pos_t cur_pos)
 {
-
     pos_t* options = (pos_t*) malloc(sizeof(pos_t) * 4);
-
-
     int nx, ny;
-
 
     //up+left
     ny = cur_pos.raw - 1;
     nx = cur_pos.col - 1;
-
     if (nx > -1 && ny > -1)
     {
         if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
@@ -400,7 +389,6 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
     }
 
 
-
     //up+right
     ny = cur_pos.raw - 1;
     nx = cur_pos.col + 1;
@@ -421,14 +409,12 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
         else
         {
             set_option(&options[1], -1, -1);
-
         }
     }
     else
     {
         set_option(&options[1], -1, -1);
     }
-
 
     //down+left
     ny = cur_pos.raw + 1;
@@ -457,7 +443,6 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
     {
         set_option(&options[2], -1, -1);
     }
-
 
     //down + right
     ny = cur_pos.raw + 1;
@@ -623,7 +608,6 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     else
     {
         set_option(&options[0], -1, -1);
-
     }
 
 
@@ -642,7 +626,6 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     else
     {
         set_option(&options[1], -1, -1);
-
     }
 
 
@@ -661,9 +644,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     else
     {
         set_option(&options[2], -1, -1);
-
     }
-
 
     //down + right
     ny = cur_pos.raw + 1;
@@ -680,9 +661,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     else
     {
         set_option(&options[3], -1, -1);
-
     }
-
 
     return options;
 }
@@ -701,10 +680,7 @@ int count_checkers_on_desk(int player_id, int desk[8][8])
 
 void check_growing(int player_id, pos_t cur_pos, int desk[8][8])
 {
-
     int side = player_id == 1 ? 0 : 7;
-
     if (cur_pos.raw == side && desk[cur_pos.raw][cur_pos.col] == player_id)
         desk[side][cur_pos.col] += 3;
-
 }

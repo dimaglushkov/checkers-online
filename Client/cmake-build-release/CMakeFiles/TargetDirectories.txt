@@ -1,3 +1,0 @@
-/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/rebuild_cache.dir
-/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/Client.dir
-/home/allacee/CLionProjects/checkers-online/Client/cmake-build-release/CMakeFiles/edit_cache.dir
