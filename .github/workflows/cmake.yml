@@ -38,10 +38,10 @@ jobs:
         brew install SDL2
       if: "matrix.os == 'macOS-latest'"
     
-    - name: Configure Client CMake
-      run: cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-    - name: Build Client
-      run: cmake -S Client --build ${{github.workspace}}/Client/build --config ${{env.BUILD_TYPE}}
+    - name: Build Client app
+      run: |
+        cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build ${{github.workspace}}/Client/build
     - name: Upload Client Artifacts
       uses: actions/upload-artifact@v2.3.1
       if: success()
@@ -50,12 +50,10 @@ jobs:
         path: ${{github.workspace}}/Client/build
         
 
-    - name: Configure Server CMake
-      run: cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-    - name: Build Server
-      run: cmake -S Server --build ${{github.workspace}}/Server/build --config ${{env.BUILD_TYPE}}
-
-        
+    - name: Build Server app
+      run: |
+        cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build ${{github.workspace}}/Server/build 
     - name: Upload Server Artifacts
       uses: actions/upload-artifact@v2.3.1
       if: success()
