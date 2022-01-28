@@ -15,10 +15,12 @@ jobs:
     env:
       BUILD_TYPE: Release
       CC: ${{ matrix.CC }}
+      
     strategy:
       matrix:
         cc: [gcc, clang]
         os: [ubuntu-latest, windows-latest, macOS-latest]
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
@@ -37,9 +39,9 @@ jobs:
       if: "matrix.os == 'macOS-latest'"
     
     - name: Configure Client CMake
-      run: cmake -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build Client
-      run: cmake --build ${{github.workspace}}/Client/build --config ${{env.BUILD_TYPE}}
+      run: cmake -S Client --build ${{github.workspace}}/Client/build --config ${{env.BUILD_TYPE}}
     - name: Upload Client Artifacts
       uses: actions/upload-artifact@v2.3.1
       if: success()
@@ -49,9 +51,9 @@ jobs:
         
 
     - name: Configure Server CMake
-      run: cmake -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build Server
-      run: cmake --build ${{github.workspace}}/Server/build --config ${{env.BUILD_TYPE}}
+      run: cmake -S Server --build ${{github.workspace}}/Server/build --config ${{env.BUILD_TYPE}}
 
         
     - name: Upload Server Artifacts
