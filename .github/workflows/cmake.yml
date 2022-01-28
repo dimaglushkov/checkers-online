@@ -1,0 +1,64 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }} 
+    runs-on: ${{ matrix.os }}
+    env:
+      BUILD_TYPE: Release
+      CC: ${{ matrix.CC }}
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up ubuntu env
+      run: |
+        sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
+        sudo apt-get update -y -qq
+        sudo apt-get install libsdl2-dev
+      if: "matrix.os == 'ubuntu-latest'"
+#     - name: Set up windows env
+#       run: echo "asd"
+#       if: "matrix.os == 'windows-latest'"
+    - name: Set up macos env
+      run: | 
+        brew install SDL2
+      if: "matrix.os == 'macOS-latest'"
+    
+    - name: Configure Client CMake
+      run: cmake -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Build Client
+      run: cmake --build ${{github.workspace}}/Client/build --config ${{env.BUILD_TYPE}}
+    - name: Upload Client Artifacts
+      uses: actions/upload-artifact@v2.3.1
+      if: success()
+      with:
+        name: checkers-online-client-${{matrix.os}}
+        path: ${{github.workspace}}/Client/build
+        
+
+    - name: Configure Server CMake
+      run: cmake -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Build Server
+      run: cmake --build ${{github.workspace}}/Server/build --config ${{env.BUILD_TYPE}}
+
+        
+    - name: Upload Server Artifacts
+      uses: actions/upload-artifact@v2.3.1
+      if: success()
+      with:
+        name: checkers-online-server-${{matrix.os}}
+        path: ${{github.workspace}}/Server/build
+        
+      
