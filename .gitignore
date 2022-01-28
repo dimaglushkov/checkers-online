@@ -28,11 +28,17 @@
 
 # IDEA folders #
 ################
+.idea
 Client/.idea/
+Client/Build
+Client/Client
 Client/cmake-build-debug
+Client/cmake-build-release
 Server/.idea/
+Server/Build
 Server/cmake-build-debug
+Server/cmake-build-release
 architecture
 
-Client/cmake-build-debug
-Server/cmake-build-debug
+
+
