@@ -7,7 +7,7 @@ set(SOURCE_FILES src/main.c src/gui.c src/network.c src/gameplay.c src/packer.c)
 #sys/socket.h on windows
 option(USE_DISTRIBUTED "Use distributed" OFF)
 
-# Find SDL2 and OpenGL
+# Find SDL2
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package(SDL2 REQUIRED COMPONENTS main)
 
@@ -23,3 +23,5 @@ if(WIN32)
                 ${CMAKE_COMMAND} -E copy_if_different ${DLL} $<TARGET_FILE_DIR:CMakeDemo>)
     endforeach()
 endif()
+
+file(COPY img DESTINATION ${CMAKE_BINARY_DIR})
