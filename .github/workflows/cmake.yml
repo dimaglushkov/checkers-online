@@ -35,7 +35,7 @@ jobs:
       with:
         version: ${{env.SDL2_VERSION}}
         sources_destination: ${{github.workspace}}/Client/extern
-        binaries_destination: ${{github.workspace}}/Client/extern/SDL-${{env.SDL2_VERSION}}
+        binaries_destination: ${{github.workspace}}/Client/extern/SDL2-${{env.SDL2_VERSION}}
 
     - name: Macos set up env
       if: "matrix.os == 'macOS-latest'"
