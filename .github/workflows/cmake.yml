@@ -34,7 +34,7 @@ jobs:
       uses: albin-johansson/download-sdl2@latest
       with:
         version: ${{env.SDL2_VERSION}}
-        sources_destination: ${{github.workspace}}/Client/extern/SDL-${{env.SDL2_VERSION}}
+        sources_destination: ${{github.workspace}}/Client/extern
         binaries_destination: ${{github.workspace}}/Client/extern/SDL-${{env.SDL2_VERSION}}
 
     - name: Macos set up env
@@ -47,13 +47,11 @@ jobs:
       run: |
         cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{github.workspace}}/Client/build
-        chmod +x ${{github.workspace}}/Client/build/Client
 
     - name: Build Server app
       run: |
         cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{github.workspace}}/Server/build
-        chmod +x ${{github.workspace}}/Server/build/Server
 
     - name: Upload Builds as Artifacts
       uses: actions/upload-artifact@v2.3.1
