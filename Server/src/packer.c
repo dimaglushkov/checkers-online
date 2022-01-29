@@ -7,6 +7,8 @@ extern char MODE_DEBUG;
 const int MESSAGE_SIZE = 66;
 const int INITIAL_MESSAGE_SIZE = 2;
 const int KING_CHECKER_OFFSET = 3;
+const int PLAYER_WIN_OFFSET = 5;
+const int PLAYER_CONCEDE_OFFSET = 7;
 
 int8_t count_checkers(const char* message, char opp_id)
 {
@@ -25,7 +27,7 @@ char* update_message(char* message)
     if (MODE_DEBUG)
         printf("[+] Server received message: %s\n", message);
 
-    if (chtoi(message[0]) > 7)
+    if (chtoi(message[0]) > PLAYER_CONCEDE_OFFSET)
     {
 //      surrender
         if (MODE_DEBUG)
@@ -38,7 +40,7 @@ char* update_message(char* message)
     int8_t opp_id = cur_id == 1 ? 2 : 1;
     int8_t opp_checkers_left = count_checkers(message, itoch(opp_id));
     if (opp_checkers_left == 0)
-        status = (int8_t)(cur_id + 5);
+        status = (int8_t)(cur_id + PLAYER_WIN_OFFSET);
     else
         status = opp_id;
 
