@@ -12,7 +12,6 @@
     #ifndef socklen_t
         typedef int socklen_t;
     #endif
-    typedef ssize_t signed long
 #else                           // UNIX/Linux
     #include <sys/socket.h>
     #include <netinet/in.h>
@@ -21,7 +20,6 @@
     #include <arpa/inet.h>
     #include <fcntl.h>
 #endif
-
 
 
 

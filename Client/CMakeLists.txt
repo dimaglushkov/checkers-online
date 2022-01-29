@@ -20,7 +20,7 @@ target_link_libraries(Client ${SDL2_LIBS} ${OPENGL_LIBRARIES})
 if(WIN32)
     foreach(DLL ${SDL2_DLLS})
         add_custom_command(TARGET Client POST_BUILD COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different ${DLL} $<TARGET_FILE_DIR:CMakeDemo>)
+                ${CMAKE_COMMAND} -E copy_if_different ${DLL} $<TARGET_FILE_DIR:Client>)
     endforeach()
 endif()
 

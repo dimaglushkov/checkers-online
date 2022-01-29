@@ -5,6 +5,9 @@ int try_create_connection(const char* ip_addr, int port)
 {
     int sock;
     struct sockaddr_in server_address;
+    #ifdef WIN32
+    u_long mode = 1;
+    #endif
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         return 0;
@@ -20,10 +23,17 @@ int try_create_connection(const char* ip_addr, int port)
     if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
         return 0;
 
-    // Put the socket in non-blocking mode:
+    #ifdef WIN32
+    if(ioctlsocket(sock, FIONBIO, &mode)) {
+        return 0;
+    };
+    #else
     if(fcntl(sock, F_SETFL, fcntl(sock, F_GETFL) | O_NONBLOCK) < 0) {
         return 0;
     }
+    #endif
+
+
 
     return sock;
 }
@@ -37,7 +47,7 @@ char* receive_message(int socket, size_t str_size, int blocking)
 {
     char* message = NULL;
     message = (char*) malloc(str_size * sizeof(char));
-    ssize_t n = 0;
+    size_t n = 0;
     if (blocking) {
         do {
             n = recv(socket, message, str_size, 0);

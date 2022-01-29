@@ -1,0 +1,48 @@
+name: Windows Release
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      BUILD_TYPE: Release
+      SDL2_VERSION: 2.0.20
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: "Update windows SDK"
+      uses: fbactions/setup-winsdk@v1
+      with:
+        winsdk-build-version: 19041
+
+    - name: "Install SDL2.0"
+      uses: albin-johansson/download-sdl2@latest
+      with:
+        version: ${{env.SDL2_VERSION}}
+        sources_destination: ${{github.workspace}}/Client/extern
+        binaries_destination: ${{github.workspace}}/Client/extern/SDL2-${{env.SDL2_VERSION}}
+
+    - name: "Build Client app"
+      run: |
+        cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_SYSTEM_VERSION=10.0.19041.0 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} 
+        cmake --build ${{github.workspace}}/Client/build
+
+    - name: "Build Server app"
+      run: |
+        cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_SYSTEM_VERSION=10.0.19041.0 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build ${{github.workspace}}/Server/build
+
+    - name: "Upload build as Artifact"
+      uses: actions/upload-artifact@v2.3.1
+      if: success()
+      with:
+        name: checkers-online-windows-${{github.sha}}
+        path: |
+          ${{github.workspace}}/Client/build
+          ${{github.workspace}}/Server/build
