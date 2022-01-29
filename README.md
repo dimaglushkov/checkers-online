@@ -1,9 +1,12 @@
+
 # Checkers-online
+[![Ubuntu Release](https://github.com/dimaglushkov/checkers-online/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/dimaglushkov/checkers-online/actions/workflows/ubuntu.yml)  [![MacOS Release](https://github.com/dimaglushkov/checkers-online/actions/workflows/macos.yml/badge.svg)](https://github.com/dimaglushkov/checkers-online/actions/workflows/macos.yml) [![Windows Release](https://github.com/dimaglushkov/checkers-online/actions/workflows/windows.yml/badge.svg)](https://github.com/dimaglushkov/checkers-online/actions/workflows/windows.yml)
+
 Checkers-online is a simple client-server desktop checkers written on C with SDL2.0
 
-Loading screen | Game screen
-:-------------:|:-------------:
-![loading sample](https://github.com/allacee/checkers-online/blob/master/Client/img/samples/loading.png) |![game sample](https://github.com/allacee/checkers-online/blob/master/Client/img/samples/game.png)
+|                                                Loading screen                                                 |                                               Game screen                                               |
+|:-------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
+| ![loading sample](https://github.com/dimaglushkov/checkers-online/blob/master/Client/img/samples/loading.png) | ![game sample](https://github.com/dimaglushkov/checkers-online/blob/master/Client/img/samples/game.png) |
 
 ### Installation
 _To compile client part it is necessary to install SDL2.0 on your machine.
