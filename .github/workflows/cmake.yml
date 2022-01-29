@@ -6,59 +6,60 @@ on:
   pull_request:
     branches: [ master ]
 
-
-
 jobs:
   build:
     name: Build on ${{ matrix.os }} 
     runs-on: ${{ matrix.os }}
     env:
       BUILD_TYPE: Release
-      CC: ${{ matrix.CC }}
+      SDL2_VERSION: 2.0.20
       
     strategy:
       matrix:
-        cc: [gcc, clang]
         os: [ubuntu-latest, windows-latest, macOS-latest]
       fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up ubuntu env
+
+    - name: Ubuntu set up env
+      if: "matrix.os == 'ubuntu-latest'"
       run: |
         sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
         sudo apt-get update -y -qq
         sudo apt-get install libsdl2-dev
-      if: "matrix.os == 'ubuntu-latest'"
-#     - name: Set up windows env
-#       run: echo "asd"
-#       if: "matrix.os == 'windows-latest'"
-    - name: Set up macos env
+
+    - name: Windows set up env
+      if: "matrix.os == 'windows-latest'"
+      uses: albin-johansson/download-sdl2@latest
+      with:
+        version: ${{env.SDL2_VERSION}}
+        sources_destination: ${{github.workspace}}/Client/extern/SDL-${{env.SDL2_VERSION}}
+        binaries_destination: ${{github.workspace}}/Client/extern/SDL-${{env.SDL2_VERSION}}
+
+    - name: Macos set up env
+      if: "matrix.os == 'macOS-latest'"
       run: | 
         brew install SDL2
-      if: "matrix.os == 'macOS-latest'"
     
+
     - name: Build Client app
       run: |
         cmake -S Client -B ${{github.workspace}}/Client/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{github.workspace}}/Client/build
-    - name: Upload Client Artifacts
-      uses: actions/upload-artifact@v2.3.1
-      if: success()
-      with:
-        name: checkers-online-client-${{matrix.os}}
-        path: ${{github.workspace}}/Client/build
-        
+        chmod +x ${{github.workspace}}/Client/build/Client
 
     - name: Build Server app
       run: |
         cmake -S Server -B ${{github.workspace}}/Server/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        cmake --build ${{github.workspace}}/Server/build 
-    - name: Upload Server Artifacts
+        cmake --build ${{github.workspace}}/Server/build
+        chmod +x ${{github.workspace}}/Server/build/Server
+
+    - name: Upload Builds as Artifacts
       uses: actions/upload-artifact@v2.3.1
       if: success()
       with:
-        name: checkers-online-server-${{matrix.os}}
-        path: ${{github.workspace}}/Server/build
-        
-      
+        name: checkers-online-${{matrix.os}}-${{github.sha}}
+        path: |
+          ${{github.workspace}}/Client/build
+          ${{github.workspace}}/Server/build

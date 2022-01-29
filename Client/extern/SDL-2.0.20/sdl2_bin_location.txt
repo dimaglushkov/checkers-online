@@ -1,0 +1,1 @@
+Location for SDL2 files on Windows
