@@ -1,50 +1,25 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-
 #include "include/network.h"
 #include "include/packer.h"
 
-const int SLEEP_TIME = 1;
-
-int create_connection(const char* ADDRESS, int PORT)
+int try_create_connection(const char* ADDRESS, int PORT)
 {
     int sock;
     struct sockaddr_in server_address;
 
-    do
-    {
-        sleep(SLEEP_TIME);
-        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        {
-            perror("Creating socket");
-            continue;
-        }
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        return 0;
 
-        memset(&server_address, '\0', sizeof(server_address));
+    memset(&server_address, '\0', sizeof(server_address));
 
-        server_address.sin_family = AF_INET;
-        server_address.sin_port = htons((uint16_t)PORT);
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons((uint16_t)PORT);
 
-        if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
-        {
-            perror("Converting addresses");
-            continue;
-        }
+    if(inet_pton(AF_INET, ADDRESS, &server_address.sin_addr)<=0)
+        return 0;
 
-        if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-        {
-            perror("Connecting");
-            continue;
-        }
+    if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
+        return 0;
 
-        break;
-    }
-    while (1);
 
     return sock;
 }
@@ -72,3 +47,23 @@ void close_connection(int socket) {
     close(socket);
 }
 
+int resolve_host_name(char * hostname , char* ip){
+    struct hostent *he;
+    struct in_addr **addr_list;
+    int i = 0;
+
+    if ((he = gethostbyname(hostname )) == NULL)
+    {
+        herror("gethostbyname");
+        return 1;
+    }
+
+    addr_list = (struct in_addr **) he->h_addr_list;
+
+    if (addr_list[i] != NULL){
+        strcpy(ip , inet_ntoa(*addr_list[i]) );
+        return 0;
+    }
+
+    return 1;
+}

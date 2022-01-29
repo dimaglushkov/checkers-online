@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "include/packer.h"
 
 const int MESSAGE_SIZE = 66;

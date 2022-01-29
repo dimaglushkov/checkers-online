@@ -1,6 +1,8 @@
 #ifndef PACKER_H
 #define PACKER_H
 
+#include <stdlib.h>
+
 extern const int MESSAGE_SIZE;
 extern const int INITIAL_MESSAGE_SIZE;
 

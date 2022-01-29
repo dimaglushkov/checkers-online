@@ -1,8 +1,9 @@
-#include <SDL2/SDL_events.h>
-#include <sys/socket.h>
 #include "include/gameplay.h"
 #include "include/gui.h"
 #include "include/network.h"
+
+const int CHECKER_KING_OFFSET = 3;
+const int PLAYER_CONCEDE_OFFSET = 7;
 
 SDL_Rect pos_t_to_rect(pos_t);
 pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[8][8], pos_t cur_pos);
@@ -42,7 +43,7 @@ int game_start(
             //handling mouse press on exit button
             if (event.button.x > 700 && event.button.x < 876
                         && event.button.y > 675 && event.button.y < 726)
-                return player_id + 7;
+                return player_id + PLAYER_CONCEDE_OFFSET;
 
 
             //options
@@ -65,7 +66,7 @@ int game_start(
                 {
                     //if selected is checker
                     if((desk[selected_pos.raw][selected_pos.col] == player_id
-                    || desk[selected_pos.raw][selected_pos.col] == (player_id + 3)))
+                    || desk[selected_pos.raw][selected_pos.col] == (player_id + CHECKER_KING_OFFSET)))
                     {
     
                         if (is_selected)
@@ -80,7 +81,7 @@ int game_start(
                         cur_pos.col = selected_pos.col;
     
     
-                        desk[cur_pos.raw][cur_pos.col] == (player_id + 3) ?
+                        desk[cur_pos.raw][cur_pos.col] == (player_id + CHECKER_KING_OFFSET) ?
 
                         (options_pos = find_options_big( opponent_id, &checker_type, desk, cur_pos))
                         :
@@ -233,7 +234,7 @@ int game_start(
 }
 
 
-int wait_for_your_turn(char ** message, int socket, int MESSAGE_SIZE)
+int wait_for_response(char ** message, int socket, int message_size)
 {
     SDL_Event event;
 
@@ -254,10 +255,30 @@ int wait_for_your_turn(char ** message, int socket, int MESSAGE_SIZE)
                 draw_rules();
 
         }
+        if(event.type == SDL_QUIT) {
+            return 1;
+        }
 
-        *message = receive_message(socket, MESSAGE_SIZE, MSG_DONTWAIT);
+        *message = receive_message(socket, message_size, MSG_DONTWAIT);
         if (*message != NULL)
             return 0;
+    }
+}
+
+int wait_for_connection(char *host_addr, int host_port)
+{
+    SDL_Event event;
+    int socket;
+
+    while(1)
+    {
+        SDL_PollEvent(&event);
+        if(event.type == SDL_QUIT)
+            return 0;
+
+        socket = try_create_connection(host_addr, host_port);
+        if (socket)
+            return socket;
     }
 }
 
@@ -366,7 +387,7 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
     nx = cur_pos.col - 1;
     if (nx > -1 && ny > -1)
     {
-        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
         && (nx - 1) > -1
         && (ny - 1) > -1
         && desk[ny - 1][nx - 1] == 0)
@@ -395,7 +416,7 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
 
     if (nx < 8 && ny > -1)
     {
-        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
             && (nx + 1) < 8
             && (ny - 1) > -1
             && desk[ny - 1][nx + 1] == 0)
@@ -422,7 +443,7 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
 
     if (nx > -1 && ny < 8)
     {
-        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
             && (nx - 1) > -1
             && (ny + 1) < 8
             && desk[ny + 1][nx - 1] == 0)
@@ -450,7 +471,7 @@ pos_t* find_options(int player_id, int opponent_id, int* checker_type, int desk[
 
     if (nx < 8 && ny < 8)
     {
-        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        if ((desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
             && (nx + 1) < 8
             && (ny + 1) < 8
             && desk[ny + 1][nx + 1] == 0)
@@ -499,7 +520,7 @@ pos_t* find_options_big(int opponent_id, int* checker_type, int desk[8][8], pos_
             ind++;
             continue;
         }
-        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + 3))
+        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + CHECKER_KING_OFFSET))
                  && desk[temp.raw - 1][temp.col - 1] == 0
                  && temp.raw - 1 > -1
                  && temp.col - 1 > -1)
@@ -523,7 +544,7 @@ pos_t* find_options_big(int opponent_id, int* checker_type, int desk[8][8], pos_
             ind++;
             continue;
         }
-        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + 3))
+        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + CHECKER_KING_OFFSET))
                  && desk[temp.raw - 1][temp.col + 1] == 0
                  && temp.raw - 1 > -1
                  && temp.col + 1 < 8)
@@ -547,7 +568,7 @@ pos_t* find_options_big(int opponent_id, int* checker_type, int desk[8][8], pos_
             ind++;
             continue;
         }
-        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + 3))
+        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + CHECKER_KING_OFFSET))
                  && desk[temp.raw + 1][temp.col - 1] == 0
                  && temp.raw + 1 < 8
                  && temp.col - 1 > -1)
@@ -570,7 +591,7 @@ pos_t* find_options_big(int opponent_id, int* checker_type, int desk[8][8], pos_
             ind++;
             continue;
         }
-        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + 3))
+        else if ((desk[temp.raw][temp.col] == opponent_id || desk[temp.raw][temp.col] == (opponent_id + CHECKER_KING_OFFSET))
                  && desk[temp.raw + 1][temp.col + 1] == 0
                  && temp.raw + 1 < 8
                  && temp.col + 1 < 8)
@@ -598,7 +619,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     nx = cur_pos.col - 1;
 
     if (nx > -1 && ny > -1
-        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
         && (nx - 1) > -1
         && (ny - 1) > -1
         && desk[ny - 1][nx - 1] == 0)
@@ -616,7 +637,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     nx = cur_pos.col + 1;
 
     if (nx < 8 && ny > -1
-        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
         && (nx + 1) < 8
         && (ny - 1) > -1
         && desk[ny - 1][nx + 1] == 0)
@@ -634,7 +655,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     nx = cur_pos.col - 1;
 
     if (nx > -1 && ny < 8
-        && (desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        && (desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
         && (nx - 1) > -1
         && (ny + 1) < 8
         && desk[ny + 1][nx - 1] == 0)
@@ -651,7 +672,7 @@ pos_t* find_options_after(int opponent_id, int desk[8][8], pos_t cur_pos)
     nx = cur_pos.col + 1;
 
     if (nx < 8 && ny < 8
-        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + 3)
+        &&(desk[ny][nx] == opponent_id || desk[ny][nx] == opponent_id + CHECKER_KING_OFFSET)
         && (nx + 1) < 8
         && (ny + 1) < 8
         && desk[ny + 1][nx + 1] == 0)
@@ -672,7 +693,7 @@ int count_checkers_on_desk(int player_id, int desk[8][8])
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
             if (desk[i][j] == player_id
-                || desk[i][j] == player_id + 3)
+                || desk[i][j] == player_id + CHECKER_KING_OFFSET)
                 num++;
 
     return num;
@@ -682,5 +703,5 @@ void check_growing(int player_id, pos_t cur_pos, int desk[8][8])
 {
     int side = player_id == 1 ? 0 : 7;
     if (cur_pos.raw == side && desk[cur_pos.raw][cur_pos.col] == player_id)
-        desk[side][cur_pos.col] += 3;
+        desk[side][cur_pos.col] += CHECKER_KING_OFFSET;
 }

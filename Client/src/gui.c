@@ -96,7 +96,7 @@ int draw_game_background(
     SDL_Surface* base_surface;
     SDL_Surface* main_surface = SDL_GetWindowSurface(main_window);
 
-    base_surface = SDL_LoadBMP("../img/background.bmp");
+    base_surface = SDL_LoadBMP("img/background.bmp");
     if (!base_surface)
         return -1;
 

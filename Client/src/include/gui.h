@@ -1,6 +1,7 @@
 #ifndef GUI_H
 #define GUI_H
-#include <SDL2/SDL.h>
+
+#include <SDL.h>
 
 int create_window_with_surface(SDL_Window** window, SDL_Surface** surface);
 void create_texture_rects(SDL_Rect* texture_rects);
