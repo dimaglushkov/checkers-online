@@ -1,28 +1,26 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#ifdef WIN32                    // Windows 95 and above
-    #include "winsock2.h"       // Almost everything is contained in one file.
-    #include "Ws2tcpip.h"
-
-    #ifndef socklen_t
-    typedef int socklen_t;
-    #endif
-#else                       // UNIX/Linux
-    #include <sys/types.h>      // Header containing all basic data types and typedefs.
-    #include <sys/socket.h>     // Header containing socket data types and functions.
-    #include <netinet/in.h>     // IPv4 and IPv6 stuff.
-    #include <unistd.h>         // For gethostname()
-    #include <netdb.h>          // For DNS - gethostbyname()
-    #include <arpa/inet.h>      // Contains all inet_* functions.
-    #include <errno.h>          // Contains the error functions.
-    #include <fcntl.h>          // File control.
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+
+#ifdef WIN32                    // Windows 95 and above
+    #include "winsock2.h"
+    #include "Ws2tcpip.h"
+
+    #ifndef socklen_t
+        typedef int socklen_t;
+    #endif
+#else                           // UNIX/Linux
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <unistd.h>
+    #include <netdb.h>
+    #include <arpa/inet.h>
+#endif
+
+
 
 
 int try_create_connection(const char* ADDRESS, int PORT);

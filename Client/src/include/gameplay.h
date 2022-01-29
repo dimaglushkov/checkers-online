@@ -2,7 +2,6 @@
 #define GAMEPLAY_H
 #include <SDL.h>
 #include <SDL_events.h>
-#include <sys/socket.h>
 
 extern const int PLAYER_CONCEDE_OFFSET;
 extern const int CHECKER_KING_OFFSET;
