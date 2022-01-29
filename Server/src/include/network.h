@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 
 #ifdef WIN32                    // Windows 95 and above
     #include "winsock2.h"

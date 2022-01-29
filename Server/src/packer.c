@@ -5,10 +5,12 @@
 
 extern char MODE_DEBUG;
 const int MESSAGE_SIZE = 66;
-const int INITIAL_MESSAGE_SIZE = 2;
+const int INITIAL_MESSAGE_SIZE = 67;
 const int KING_CHECKER_OFFSET = 3;
 const int PLAYER_WIN_OFFSET = 5;
 const int PLAYER_CONCEDE_OFFSET = 7;
+const char * INITIAL_MESSAGE = "012020202002020202202020200000000000000000010101011010101001010101";
+
 
 int8_t count_checkers(const char* message, char opp_id)
 {

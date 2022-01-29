@@ -1,7 +1,6 @@
 #include "include/network.h"
 #include "include/packer.h"
 
-const char * INITIAL_MESSAGE = "12020202002020202202020200000000000000000010101011010101001010101";
 
 extern char MODE_DEBUG;
 
@@ -96,13 +95,16 @@ void clear_socket(int cur_sd, int* client_socket, struct sockaddr_in * address, 
 
 void start_game(int* client_socket, int second_id)
 {
-    //sending ids
-    send(client_socket[second_id - 1], "1", INITIAL_MESSAGE_SIZE, 0);
-    send(client_socket[second_id], "2", INITIAL_MESSAGE_SIZE, 0);
-
     //sending initial messages to start game
-    send(client_socket[second_id - 1], INITIAL_MESSAGE, MESSAGE_SIZE, 0);
-    send(client_socket[second_id], INITIAL_MESSAGE, MESSAGE_SIZE, 0);
+    char init_message[INITIAL_MESSAGE_SIZE];
+    strcpy(init_message, INITIAL_MESSAGE);
+
+
+    init_message[0] = '1';
+    send(client_socket[second_id - 1], init_message, INITIAL_MESSAGE_SIZE, 0);
+
+    init_message[0] = '2';
+    send(client_socket[second_id], init_message, INITIAL_MESSAGE_SIZE, 0);
 }
 
 void set_fd(int* max_sd, uint8_t MAX_CLIENTS, const int* client_socket, fd_set* read_fds)

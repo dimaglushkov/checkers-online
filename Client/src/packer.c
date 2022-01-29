@@ -1,7 +1,7 @@
 #include "include/packer.h"
 
 const int MESSAGE_SIZE = 66;
-const int INITIAL_MESSAGE_SIZE = 2;
+const int INITIAL_MESSAGE_SIZE = 67;
 
 char* create_message(int index, int desk[8][8])
 {
@@ -26,10 +26,11 @@ int parse_message(char* message, int desk[8][8])
     return index;
 }
 
-int parse_initial_message(char* message)
+int parse_initial_message(char* message, int* player_id, int desk[8][8])
 {
     int status;
-    status = chtoi(message[0]);
+    *player_id = chtoi(message[0]);
+    status = parse_message(&message[1], desk);
     return status;
 }
 

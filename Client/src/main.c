@@ -55,13 +55,8 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    message = receive_message(socket, INITIAL_MESSAGE_SIZE, 0);
-    player_id = parse_initial_message(message);
-    free(message);
+    status = parse_initial_message(message, &player_id, desk);
     opponents_id = player_id == 1 ? 2 : 1;
-
-    message = receive_message(socket, MESSAGE_SIZE, 0);
-    status = parse_message(message, desk);
 
     draw_game_background(main_window, checkers_surface, texture_rects, player_id);
     draw_checkers_on_desk(main_window, desk_surface, checkers_surface, texture_rects, desk, status);

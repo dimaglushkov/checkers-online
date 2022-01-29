@@ -259,7 +259,7 @@ int wait_for_response(char ** message, int socket, int message_size)
             return 1;
         }
 
-        *message = receive_message(socket, message_size, MSG_DONTWAIT);
+        *message = receive_message(socket, message_size, 0);
         if (*message != NULL)
             return 0;
     }
