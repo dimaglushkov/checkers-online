@@ -5,10 +5,36 @@ int try_create_connection(const char* ip_addr, int port)
 {
     int sock;
     struct sockaddr_in server_address;
-    #ifdef WIN32
+#ifdef WIN32
+    WSADATA wsaData;
     u_long mode = 1;
-    #endif
 
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != NO_ERROR){
+        printf("Error at WSAStartup()\n");
+        return 0;
+    }
+    if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {
+        printf("socket failed with error: %ld\n", WSAGetLastError());
+        WSACleanup();
+        return 0;
+    }
+
+    server_address.sin_family = AF_INET;
+    server_address.sin_addr.s_addr = inet_addr(ip_addr);
+    server_address.sin_port = htons(port);
+
+
+    if (connect(sock, (SOCKADDR *) & server_address, sizeof (server_address))) {
+        wprintf(L"connect function failed with error: %ld\n", WSAGetLastError());
+        WSACleanup();
+        return 0;
+    }
+
+    if(ioctlsocket(sock, FIONBIO, &mode) != NO_ERROR) {
+        WSACleanup();
+        return 0;
+    }
+#else
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         return 0;
 
@@ -23,18 +49,9 @@ int try_create_connection(const char* ip_addr, int port)
     if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
         return 0;
 
-    #ifdef WIN32
-    if(ioctlsocket(sock, FIONBIO, &mode)) {
+    if(fcntl(sock, F_SETFL, fcntl(sock, F_GETFL) | O_NONBLOCK) < 0)
         return 0;
-    };
-    #else
-    if(fcntl(sock, F_SETFL, fcntl(sock, F_GETFL) | O_NONBLOCK) < 0) {
-        return 0;
-    }
-    #endif
-
-
-
+#endif
     return sock;
 }
 
@@ -70,28 +87,6 @@ void close_connection(int socket) {
 }
 
 int resolve_host_name(char * hostname , char* ip){
-    struct hostent *he;
-    struct in_addr **addr_list;
-    int i = 0;
-
-    if ((he = gethostbyname(hostname )) == NULL)
-    {
-        herror("gethostbyname");
-        return 1;
-    }
-
-    addr_list = (struct in_addr **) he->h_addr_list;
-
-    if (addr_list[i] != NULL){
-        strcpy(ip , inet_ntoa(*addr_list[i]) );
-        return 0;
-    }
-
-    return 1;
-}
-
-/*
-int resolve_host_name(char * hostname , char* ip){
     struct addrinfo hints, *serv_info, *p;
     struct sockaddr_in *h;
     int rv;
@@ -114,4 +109,3 @@ int resolve_host_name(char * hostname , char* ip){
     freeaddrinfo(serv_info);
     return 0;
 }
-*/

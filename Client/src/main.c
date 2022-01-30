@@ -30,9 +30,9 @@ int main(int argc, char* argv[])
     SDL_Rect texture_rects[10];
 
     host_addr = get_host_addr(argc, argv);
-    if (resolve_host_name(host_addr, host_ip)){
-        return 1;
-    }
+//    if (resolve_host_name(host_addr, host_ip)){
+//        return 1;
+//    }
     host_port = get_host_port(argc, argv);
 
     create_window_with_surface(&main_window, &main_surface);
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     create_texture_rects(texture_rects);
 
     draw_image(&main_window, CONNECTING_BMP);
-    socket = wait_for_connection(host_ip, host_port);
+    socket = wait_for_connection(host_addr, host_port);
     if (socket == 0) {
         free_window_surfaces(main_window, checkers_surface, desk_surface);
         return 0;
