@@ -15,13 +15,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: "Download SDL2 sources"
+      shell: powershell
+      run: Invoke-WebRequest -Uri "https://libsdl.org/release/SDL2-devel-${{env.SDL2_VERSION}}-mingw.tar.gz" `
+        -OutFile ${{github.workspace}}/Client/SDL2-devel-${{env.SDL2_VERSION}}-mingw.tar.gz
+    - name: "Unzip SDL2 sources"
+      shell: cmd
+      run: |
+        cd ${{github.workspace}}/Client
+        7z x SDL2-devel-${{env.SDL2_VERSION}}-mingw.tar.gz -so | 7z x -aoa -si -ttar -o"extern"
+        del SDL2-devel-${{env.SDL2_VERSION}}-mingw.tar.gz
 
-    - name: "Install SDL2.0"
-      uses: albin-johansson/download-sdl2@latest
-      with:
-        version: ${{env.SDL2_VERSION}}
-        sources_destination: ${{github.workspace}}/Client/extern
-        binaries_destination: ${{github.workspace}}/Client/extern/SDL2-${{env.SDL2_VERSION}}
+    - name: "Download SDL2 runtime binaries"
+      shell: powershell
+      run: Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-${{env.SDL2_VERSION}}-win32-x64.zip" `
+        -OutFile ${{github.workspace}}/Client/extern/SDL2-${{env.SDL2_VERSION}}/SDL2-${{env.SDL2_VERSION}}-win32-x64.zip
+    - name: "Unzip SDL2 runtime binaries archive"
+      shell: cmd
+      run: |
+        cd ${{github.workspace}}/Client/extern/SDL2-${{env.SDL2_VERSION}}
+        7z x -y SDL2-${{env.SDL2_VERSION}}-win32-x64.zip
+        del SDL2-${{env.SDL2_VERSION}}-win32-x64.zip
 
     - name: "Build Client app"
       run: |
