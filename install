@@ -1,7 +1,0 @@
-#!/bin/sh
-cd Client && cmake CMakeLists.txt -B Build && cd Build && make ;
-cd ../../Server && cmake CMakeLists.txt -B Build && cd Build && make ;
-cd ../.. ;
-echo 'cd Client/Build && ./Client &' > launch_client ;
-echo 'cd Server/Build && ./Server' > launch_server ;
-chmod +x launch*

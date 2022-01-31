@@ -1,5 +1,0 @@
-#!/bin/sh
-rm -rf Client/Build ;
-rm -rf Server/Build ;
-rm launch*;
-echo 'Builds removed'
