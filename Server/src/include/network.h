@@ -7,9 +7,10 @@
 #include <string.h>
 
 #ifdef WIN32                    // Windows 95 and above
-    #include "winsock2.h"
-    #include "Ws2tcpip.h"
-
+    #include <winsock2.h>
+    #include <Ws2tcpip.h>
+    #include <stdint.h>   
+    #include <errno.h>      
     #ifndef socklen_t
         typedef int socklen_t;
     #endif
@@ -22,10 +23,10 @@
     #include <errno.h>
 #endif
 
-int create_socket(int, int, int);
+extern const uint8_t MAX_CLIENTS;
+
+int create_socket(int* sock, struct sockaddr_in* address, uint16_t port);
 int accept_socket(int master_socket, struct sockaddr_in * address, socklen_t* address_len);
-void init_socket(int sockfd, struct sockaddr_in* address, uint16_t PORT);
-void init_address(struct sockaddr_in * address, uint16_t PORT);
 int select_fds(int max_sd, fd_set* readfds);
 void clear_socket(int cur_sd, int* client_socket, struct sockaddr_in * address,  socklen_t* address_len);
 void start_game(int* client_socket, int second_id);

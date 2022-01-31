@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <netinet/in.h>
 #include "include/packer.h"
 #include "include/network.h"
 
@@ -9,7 +8,6 @@ uint16_t get_port(int argc, char *argv[]);
 void get_mode(int argc, char *argv[]);
 
 char MODE_DEBUG = 0;
-const uint8_t MAX_CLIENTS = 2;
 
 int main(int argc , char *argv[])
 {
@@ -18,7 +16,7 @@ int main(int argc , char *argv[])
             cur_sd,
             max_sd;
     char *message;
-    const uint16_t PORT = get_port(argc, argv);
+    const uint16_t port = get_port(argc, argv);
     get_mode(argc, argv);
 
     socklen_t address_len;
@@ -27,9 +25,10 @@ int main(int argc , char *argv[])
 
     for (uint8_t i = 0; i < MAX_CLIENTS; i++)
         client_socket[i] = 0;
-    master_socket = create_socket(AF_INET , SOCK_STREAM , 0);
-    init_address(&address, PORT);
-    init_socket(master_socket, &address, PORT);
+
+    if (create_socket(&master_socket, &address, port) != 0)
+        return 1;
+
     address_len = sizeof(address);
 
     while(1)
@@ -43,7 +42,6 @@ int main(int argc , char *argv[])
 
         if (FD_ISSET(master_socket, &read_fds))
         {
-
             if ((cur_sd = accept_socket(master_socket, &address, &address_len)) < 0)
                 return 0;
 

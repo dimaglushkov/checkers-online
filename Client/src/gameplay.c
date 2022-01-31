@@ -269,7 +269,7 @@ int wait_for_connection(char *host_addr, int host_port)
 {
     SDL_Event event;
     int socket;
-
+    
     while(1)
     {
         SDL_PollEvent(&event);

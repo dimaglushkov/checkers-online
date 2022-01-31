@@ -1,6 +1,10 @@
 #ifndef PACKER_H
 #define PACKER_H
 
+#ifdef WIN32                  
+    #include "stdint.h"         
+#endif
+
 extern const int MESSAGE_SIZE;
 extern const int INITIAL_MESSAGE_SIZE;
 extern const char * INITIAL_MESSAGE;

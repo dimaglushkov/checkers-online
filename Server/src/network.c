@@ -3,24 +3,100 @@
 
 
 extern char MODE_DEBUG;
+const uint8_t MAX_CLIENTS = 2;
 
 void set_mode_debug()
 {
     MODE_DEBUG = 1;
 }
 
-int create_socket (int domain, int type, int protocol)
+int create_socket(int* sock, struct sockaddr_in* address, uint16_t port)
 {
-    int sockfd;
-    signal(SIGPIPE, SIG_IGN);
+    #ifdef WIN32                  
+    WSADATA wsaData;
+    int err;
+    char opt = 1;
 
-    if( (sockfd = socket(domain, type, protocol)) == 0)
+    SOCKET ListenSocket = INVALID_SOCKET;
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    struct addrinfo *result = NULL;
+    struct addrinfo hints;
+
+    if ((err = WSAStartup(MAKEWORD(2,2), &wsaData)) != 0) 
     {
-        perror("[!] Error: creating socket failed");
-        exit(EXIT_FAILURE);
+        printf("WSAStartup failed with error: %d\n", err);
+        return 1;
     }
 
-    return sockfd;
+    address->sin_family = AF_INET;
+    address->sin_addr.s_addr = INADDR_ANY;
+    address->sin_port = htons(port);
+
+    if ((*sock = socket(address->sin_family, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) 
+    {
+        printf("[!] Error: socket failed with error: %d\n", WSAGetLastError());
+        WSACleanup();
+        return 1;
+    }
+
+    if ((err = setsockopt(*sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) != 0) {
+        printf("[!] Error: setsockopt for SO_REUSEADDR failed with error: %d\n", WSAGetLastError());
+        return 1;
+    } 
+
+    if ((err = bind(*sock, (struct sockaddr *) address, sizeof(*address))) == SOCKET_ERROR) {
+        printf("[!] Error: bind failed with error: %d\n", WSAGetLastError());
+        closesocket(*sock);
+        WSACleanup();
+        return 1;
+    }
+
+    if ((err = listen(*sock, MAX_CLIENTS)) == SOCKET_ERROR) {
+        printf("[!] Error: listen failed with error: %d\n", WSAGetLastError());
+        closesocket(*sock);
+        WSACleanup();
+        return 1;
+    }
+
+    #else
+    int opt = 1;
+    signal(SIGPIPE, SIG_IGN);
+
+    address -> sin_family = AF_INET;
+    address -> sin_addr.s_addr = INADDR_ANY;
+    address -> sin_port = htons(port);
+
+    if((*sock = socket(address -> sin_family, SOCK_STREAM, 0)) == 0)
+    {
+        perror("[!] Error: creating socket failed");
+        return 1;
+    }
+
+    if(setsockopt(*sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        perror("[!] Error: setting socket options failed");
+        return 1;
+    }
+
+    if(bind(*sock, (struct sockaddr *) address, sizeof(*address)) < 0)
+    {
+        perror("[!] Error: binding failed");
+        return 1;
+    }
+
+    if(listen(*sock, MAX_CLIENTS) < 0)
+    {
+        perror("[!] Error: listen() failed");
+        return 1;
+    }
+
+    #endif
+
+    if (MODE_DEBUG)
+        printf("[+] Listener on port %d \n[+] Waiting for connections...\n", port);
+    
+    return 0;
 }
 
 int accept_socket(int master_socket, struct sockaddr_in * address, socklen_t* address_len)
@@ -36,35 +112,6 @@ int accept_socket(int master_socket, struct sockaddr_in * address, socklen_t* ad
                ntohs(address -> sin_port));
 
     return sock;
-}
-
-void init_address(struct sockaddr_in * address, uint16_t PORT)
-{
-    address -> sin_family = AF_INET;
-    address -> sin_addr.s_addr = INADDR_ANY;
-    address -> sin_port = htons( PORT );
-}
-
-void init_socket(int sockfd, struct sockaddr_in* address, uint16_t PORT)
-{
-    int opt = 1;
-    if( setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0 )
-    {
-        perror("[!] Error: setting socket options failed");
-        exit(EXIT_FAILURE);
-    }
-    if (bind(sockfd, (struct sockaddr *) address, sizeof(*address))<0)
-    {
-        perror("[!] Error: binding failed");
-        exit(EXIT_FAILURE);
-    }
-    if (listen(sockfd, 2) < 0)
-    {
-        perror("[!] Error: listen() failed");
-        exit(EXIT_FAILURE);
-    }
-    if (MODE_DEBUG)
-        printf("[+] Listener on port %d \n[+] Waiting for connections...\n", PORT);
 }
 
 int select_fds(int max_sd, fd_set* readfds)
@@ -89,7 +136,11 @@ void clear_socket(int cur_sd, int* client_socket, struct sockaddr_in * address, 
                inet_ntoa(address -> sin_addr),
                ntohs(address -> sin_port));
 
+    #ifdef WIN32
+    closesocket(cur_sd);
+    #else
     close(cur_sd);
+    #endif
     *client_socket = 0;
 }
 

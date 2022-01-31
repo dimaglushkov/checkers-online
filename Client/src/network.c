@@ -8,6 +8,7 @@ int try_create_connection(const char* ip_addr, int port)
 #ifdef WIN32
     WSADATA wsaData;
     u_long mode = 1;
+    struct fd_set fds;
 
     if (WSAStartup(MAKEWORD(2,2), &wsaData) != NO_ERROR){
         printf("Error at WSAStartup()\n");
@@ -19,21 +20,28 @@ int try_create_connection(const char* ip_addr, int port)
         return 0;
     }
 
+    memset(&server_address, '\0', sizeof(server_address));
+
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = inet_addr(ip_addr);
     server_address.sin_port = htons(port);
 
-
-    if (connect(sock, (SOCKADDR *) & server_address, sizeof (server_address))) {
-        wprintf(L"connect function failed with error: %ld\n", WSAGetLastError());
-        WSACleanup();
-        return 0;
-    }
-
     if(ioctlsocket(sock, FIONBIO, &mode) != NO_ERROR) {
+        printf("connect function failed with error: %ld\n", WSAGetLastError());
         WSACleanup();
         return 0;
     }
+
+
+    connect(sock, (SOCKADDR *) & server_address, sizeof (server_address));
+    FD_ZERO(&fds);
+    FD_SET(sock, &fds);
+    if (select(0, 0, &fds, 0, 0) != 1) {
+        WSACleanup();
+        return 0;
+    }
+
+
 #else
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         return 0;
@@ -51,7 +59,9 @@ int try_create_connection(const char* ip_addr, int port)
 
     if(fcntl(sock, F_SETFL, fcntl(sock, F_GETFL) | O_NONBLOCK) < 0)
         return 0;
+
 #endif
+
     return sock;
 }
 
@@ -83,7 +93,11 @@ char* receive_message(int socket, size_t str_size, int blocking)
 }
 
 void close_connection(int socket) {
+    #ifdef WIN32
+    closesocket(socket);
+    #else
     close(socket);
+    #endif
 }
 
 int resolve_host_name(char * hostname , char* ip){
