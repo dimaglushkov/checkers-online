@@ -1,7 +1,7 @@
 #include "include/network.h"
 #include "include/packer.h"
 
-int try_create_connection(const char* ip_addr, int port)
+int try_create_connection(char* ip_addr, int port)
 {
     int sock;
     struct sockaddr_in server_address;

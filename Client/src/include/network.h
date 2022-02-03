@@ -23,7 +23,7 @@
 
 
 
-int try_create_connection(const char* ip_addr, int port);
+int try_create_connection(char* ip_addr, int port);
 void close_connection(int socket);
 int send_message(int socket, char* message);
 char* receive_message(int socket, size_t str_size, int blocking);

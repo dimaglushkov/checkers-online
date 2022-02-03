@@ -4,8 +4,8 @@
 #include "include/network.h"
 #include "include/packer.h"
 
-char* get_host_addr(int argc, char *argv[]);
-int   get_host_port(int argc, char *argv[]);
+char* get_conf_file(int argc, char *argv[]);
+int   load_conf(char** host_addr, int* host_port, char* conf_file);
 
 const char *CONNECTING_BMP = "img/connecting.bmp",
            *WAITING_BMP = "img/waiting.bmp",
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
 
     int socket, host_port;
-    char* host_addr;
+    char *host_addr, *conf_file;
     char host_ip[16];
 
     int status = 0, player_id, opponents_id;
@@ -29,11 +29,10 @@ int main(int argc, char* argv[])
     SDL_Surface* desk_surface = NULL;
     SDL_Rect texture_rects[10];
 
-    host_addr = get_host_addr(argc, argv);
-//    if (resolve_host_name(host_addr, host_ip)){
-//        return 1;
-//    }
-    host_port = get_host_port(argc, argv);
+
+    conf_file = get_conf_file(argc, argv);
+    if (load_conf(&host_addr, &host_port, conf_file))
+        return 1;
 
     create_window_with_surface(&main_window, &main_surface);
     checkers_surface = create_surface_from_bmp(CHECKERS_BMP);
@@ -111,27 +110,43 @@ int main(int argc, char* argv[])
     draw_result(status);
 
     free(message);
+    free(host_addr);
     free_window_surfaces(main_window, checkers_surface, desk_surface);
     close_connection(socket);
     return 0;
 }
 
-char* get_host_addr(int argc, char *argv[])
+int load_conf(char** host_addr, int* host_port, char* conf_file)
 {
-    for (int i = 0; i < argc; i++)
+    const int line_lim = 100;
+    char line[line_lim], addr_buffer[line_lim];
+    FILE* file;
+
+    memset(line, '\0', line_lim);
+    memset(addr_buffer, '\0', line_lim);
+
+    if ((file = fopen(conf_file, "r")) == NULL)
+        return 1;
+
+    if(fgets(line, 512, file) == NULL)
     {
-        if (strcmp(argv[i], "-h") == 0 && argv[i + 1])
-            return argv[i + 1];
+        fclose(file);  /* close the file */
+        return 1;
     }
-    return "127.0.0.1";
+    sscanf(line, "%s %d", addr_buffer, host_port);
+    *host_addr = (char*) malloc(strlen(addr_buffer) * sizeof(char));
+    strcpy(*host_addr, addr_buffer);
+    fclose(file);
+    return 0;
 }
 
-int get_host_port(int argc, char *argv[])
+
+char* get_conf_file(int argc, char *argv[])
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "-p") == 0 && argv[i + 1])
-            return atoi(argv[i + 1]);
+        if (strcmp(argv[i], "-c") == 0 && argv[i + 1])
+            return argv[i + 1];
     }
-    return 2510;
+    return "con.conf";
 }
