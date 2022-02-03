@@ -148,5 +148,5 @@ char* get_conf_file(int argc, char *argv[])
         if (strcmp(argv[i], "-c") == 0 && argv[i + 1])
             return argv[i + 1];
     }
-    return "con.conf";
+    return "conf/con.conf";
 }

@@ -28,5 +28,5 @@ else()
 endif()
 
 file(COPY img DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY con.conf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY conf DESTINATION ${CMAKE_BINARY_DIR})
 
